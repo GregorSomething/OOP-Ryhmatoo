@@ -10,3 +10,8 @@ Selle funktsionaalsus:
 - CLI (ja GUI)
 - Piltide kuvamine tekstis (GUI puhul)
 - ... Võib lisanduda jooksvalt
+
+## Rühma liikmed
+- Karl Oskar Jaagosild ([@karloskarl](https://github.com/karloskarl))
+- Gregor Suurvarik ([@GregorSomething](https://github.com/GregorSomething))
+- pinkfordranger (TBD)
