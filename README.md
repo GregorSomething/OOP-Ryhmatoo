@@ -14,4 +14,4 @@ Selle funktsionaalsus:
 ## Rühma liikmed
 - Karl Oskar Jaagosild ([@karloskarl](https://github.com/karloskarl))
 - Gregor Suurvarik ([@GregorSomething](https://github.com/GregorSomething))
-- pinkfordranger (TBD)
+- Raul Raudsepp (([@rauldsepp](https://github.com/rauldsepp)))
