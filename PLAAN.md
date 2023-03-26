@@ -8,7 +8,7 @@
 - Piltide kuvamine tekstis (GUI puhul)
 - ... Võib lisanduda jooksvalt
 ### Täpsem
-- [ ] Command line interface
+- [ ] Command line interface (Karl Oskar)
 - [ ] Kasutaja liidesele kindel interface, et saaks vahetada hiljem GUI peale, lihtsamini
 - [ ] Sisse logimine
 - [ ] Vanade chatite vaatamine
