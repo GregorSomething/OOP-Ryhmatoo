@@ -2,14 +2,7 @@
 Objektorienteeritud programmeerimine aine raames tehtud rühmatöö.
 
 ## Chat app
-Selle funktsionaalsus:
-- Erinevad chatid
-- Kasutaja andme haldus serveris (parooli ja nime hoid)
-- Failidie piltide saatmine
-- Sõnumite hoid serveris, vajalike saatmine kliendile
-- CLI (ja GUI)
-- Piltide kuvamine tekstis (GUI puhul)
-- ... Võib lisanduda jooksvalt
+**Funktsionaalsus ja tööjaotus:** [siin](PLAAN.md) 
 
 ## Rühma liikmed
 - Karl Oskar Jaagosild ([@karloskarl](https://github.com/karloskarl))
