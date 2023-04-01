@@ -8,7 +8,9 @@ import oop.ryhmatoo.server.socket.data.ClientInfo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,13 +23,16 @@ public class Server {
 
     private static Server instance;
     // Executor service serverile
-    public final ExecutorService executor;
-    public final AuthService authService;
-    public final SocetMain socetMain;
+    private final ExecutorService executor;
+    private final AuthService authService;
+    private final SocetMain socetMain;
     private HashMap<String, String> logins;
+    private List<Message> inMemoryMessageStorage;
 
     public Server(String[] args) throws IOException {
         Server.instance = this;
+        // Asenda see millegi muuga, TODO
+        this.inMemoryMessageStorage = new ArrayList<>();
         this.executor = Executors.newFixedThreadPool(8);
         this.authService = new AuthService();
         this.socetMain = new SocetMain(PORT);
@@ -54,6 +59,7 @@ public class Server {
     public void onMessage(ClientInfo client, Message message) {
         // TODO: Asenda mõistlikuma asjaga :)
         System.out.printf("[%s] %s - %s%n", client.displayName(), message.channel(), message.content());
+        this.inMemoryMessageStorage.add(message);
     }
 
     /**
@@ -77,5 +83,9 @@ public class Server {
      */
     public AuthService getAuthService() {
         return authService;
+    }
+
+    public List<Message> getInMemoryMessageStorage() {
+        return inMemoryMessageStorage;
     }
 }

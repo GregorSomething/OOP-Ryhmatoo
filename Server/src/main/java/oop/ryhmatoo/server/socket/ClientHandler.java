@@ -100,7 +100,7 @@ public class ClientHandler implements Runnable {
             // Loen infos
             // TODO: Asenda korrektes asjaga
             int limit = dis.readInt();
-            List<Message> messages = getDummyMessages(limit);
+            List<Message> messages = Server.getInstance().getInMemoryMessageStorage();
 
             // saada response sest ma teen nii?
             ResponseHeader rs = new ResponseHeader(1,
