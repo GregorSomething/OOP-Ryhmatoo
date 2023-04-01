@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -16,12 +17,20 @@ public class ServerConnectionImp implements ServerConnection, Runnable {
     private DataInputStream dis;
     private DataOutputStream dos;
     private ClientInfo info;
+    private ResponseHeader lastResponse;
 
 
     @Override
-    public void start(ClientInfo info) throws IOException {
+    public void start(ClientInfo info) throws LoginException {
         this.info = info;
         new Thread(this).start();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        if (lastResponse != null && lastResponse.status() != 1)
+            throw new LoginException("Login failed (" + lastResponse.status() + "): " + lastResponse.message());
     }
 
     /**
@@ -98,23 +107,32 @@ public class ServerConnectionImp implements ServerConnection, Runnable {
             dos.writeUTF(this.info.displayName());
             dos.writeUTF(this.info.password());
             ResponseHeader rs = ResponseHeader.from(dis);
-            if (rs.status() != 1) return; // Asenda paremaga
+            this.lastResponse = rs;
+            if (rs.status() != 1) {
+                // Kui sisselogimine polnud edukas.
+                this.working = false;
+                return;
+            }
             // TODO tee asju
             while (true) {
                 Thread.sleep(100);
             }
 
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            this.lastResponse = new ResponseHeader(0, e.getClass().getName() + ": " + e.getMessage());
+            //throw new RuntimeException(e);
         } finally {
+            this.working = false;
             // Kuna neid ei saanud auto sulgeda.
             try {
-                this.dis.close();
+                if (this.dis != null)
+                    this.dis.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             try {
-                this.dos.close();
+                if (this.dos != null)
+                    this.dos.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

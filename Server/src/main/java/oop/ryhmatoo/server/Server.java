@@ -41,7 +41,7 @@ public class Server {
         try(Scanner scanner = new Scanner(new File("logins.txt"))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                String[] parts = line.split(" ");
+                String[] parts = line.split(";");
                 logins.put(parts[0], parts[1]);
             }
         }

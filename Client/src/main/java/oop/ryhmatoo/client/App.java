@@ -30,8 +30,13 @@ public class App {
                         String ip = address.split(":")[0];
                         System.out.println("Sisesta parool");
                         String password = sc.nextLine();
-                        ClientInfo info = new ClientInfo(name, name, address, port, password);
-                        server.start(info);
+                        ClientInfo info = new ClientInfo(name, name, ip, port, password);
+                        try {
+                            server.start(info);
+                        } catch (ServerConnection.LoginException e) {
+                            // TODO väljasta see
+                            throw new RuntimeException(e);
+                        }
                         System.out.println("Sisesta sõnum");
                         String message = sc.nextLine();
                         System.out.println("Sisesta kanal");
@@ -51,8 +56,12 @@ public class App {
                         String ip = address.split(":")[0];
                         System.out.println("Sisesta parool");
                         String password = sc.nextLine();
-                        ClientInfo info = new ClientInfo(name, displayName, address, port, password);
-                        server.start(info);
+                        ClientInfo info = new ClientInfo(name, displayName, ip, port, password);
+                        try {
+                            server.start(info);
+                        } catch (ServerConnection.LoginException e) {
+                            throw new RuntimeException(e);
+                        }
                         System.out.println("Sisesta sõnum");
                         String message = sc.nextLine();
                         System.out.println("Sisesta kanal");
