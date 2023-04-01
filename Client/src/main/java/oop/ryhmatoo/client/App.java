@@ -43,7 +43,7 @@ public class App {
                     String message = sc.nextLine();
                     System.out.println(server.sendMessage(message, "K1"));
                 case "l":
-                    System.out.println(server.getLastMessages(100));
+                    System.out.println(server.getLastMessages(1));
                 case "exit":
                     break;
                 default:
