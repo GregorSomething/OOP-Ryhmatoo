@@ -1,6 +1,7 @@
 # Funktsionaalsus
 ### Üldine
 - Erinevad chatid
+- Mitu erinevat kanalit iga kasutajaga
 - Kasutaja andme haldus serveris (parooli ja nime hoid)
 - Failidie piltide saatmine
 - Sõnumite hoid serveris, vajalike saatmine kliendile
@@ -15,6 +16,7 @@
 - [ ] Uute chatide loomine/saatmine
 - [ ] Server <-> Client ühendus Socketiga (Gregor)
 - [ ] Andmeklasside (v Recordite) automaatne saatmine/lugemine (Socketiga) (Gregor)
+- [ ] Kahe arvuti vahene ühendus (Karl Oskar)
 - [ ] Eri failide saatmine
 - [ ] Andmete salvestamine andmebaasi v faili
 - [ ] Lisada Siia vastavalt vajadusele

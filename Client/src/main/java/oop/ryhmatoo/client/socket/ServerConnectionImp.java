@@ -54,10 +54,10 @@ public class ServerConnectionImp implements ServerConnection, Runnable {
         synchronized (this) {
             dos.writeInt(110);
             dos.writeInt(limit);
-
             ResponseHeader rs = ResponseHeader.from(dis);
-            if (rs.status() == 0) throw new IOException(rs.message());
-
+            if (rs.status() == 0) {
+                throw new IOException(rs.message());
+            }
             int count = dis.readInt();
             List<Message> messages = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
@@ -67,6 +67,21 @@ public class ServerConnectionImp implements ServerConnection, Runnable {
         }
     }
 
+    public List<String> getLogins() throws IOException {
+        if (!working) return null;
+        synchronized (this) {
+            dos.writeInt(120);
+            ResponseHeader rs = ResponseHeader.from(dis);
+            if (rs.status() == 0) throw new IOException(rs.message());
+
+            int count = dis.readInt();
+            List<String> logins = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                logins.add(dis.readUTF());
+            }
+            return logins;
+        }
+    }
     @Override
     public void registerMessageListener(Consumer<Message> listener) {
         throw new RuntimeException("Ma pole seda veel teinud - Gregor");
