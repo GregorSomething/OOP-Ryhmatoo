@@ -9,75 +9,46 @@ import java.util.Scanner;
 
 /**
  * Hello world!
- *
  */
 public class App {
-    public static void main( String[] args ) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Tere tulemast chati!");
         ServerConnection server = new ServerConnectionImp();
-        label:
-        while(true) {
-            System.out.println("Kas soovite sisse logida või luua uue kasutaja? (login/create/exit)");
-            try (Scanner sc = new Scanner(System.in)) {
-                String input = sc.nextLine();
-                switch (input) {
-                    case "login": {
-                        System.out.println("Sisesta kasutajanimi");
-                        String name = sc.nextLine();
-                        System.out.println("Sisesta serveri aadress vormis ip:port");
-                        String address = sc.nextLine();
-                        int port = Integer.parseInt(address.split(":")[1]);
-                        String ip = address.split(":")[0];
-                        System.out.println("Sisesta parool");
-                        String password = sc.nextLine();
-                        ClientInfo info = new ClientInfo(name, name, ip, port, password);
-                        try {
-                            server.start(info);
-                        } catch (ServerConnection.LoginException e) {
-                            // TODO väljasta see
-                            throw new RuntimeException(e);
-                        }
-                        System.out.println("Sisesta sõnum");
-                        String message = sc.nextLine();
-                        System.out.println("Sisesta kanal");
-                        String channel = sc.nextLine();
-                        System.out.println(server.sendMessage(message, channel));
-                        System.out.println(server.getLastMessages(100));
-                        break;
-                    }
-                    case "create": {
-                        System.out.println("Sisesta kasutajanimi");
-                        String name = sc.nextLine();
-                        System.out.println("Sisesta kuvatav nimi");
-                        String displayName = sc.nextLine();
-                        System.out.println("Sisesta serveri aadress vormis ip:port");
-                        String address = sc.nextLine();
-                        int port = Integer.parseInt(address.split(":")[1]);
-                        String ip = address.split(":")[0];
-                        System.out.println("Sisesta parool");
-                        String password = sc.nextLine();
-                        ClientInfo info = new ClientInfo(name, displayName, ip, port, password);
-                        try {
-                            server.start(info);
-                        } catch (ServerConnection.LoginException e) {
-                            throw new RuntimeException(e);
-                        }
-                        System.out.println("Sisesta sõnum");
-                        String message = sc.nextLine();
-                        System.out.println("Sisesta kanal");
-                        String channel = sc.nextLine();
-                        System.out.println(server.sendMessage(message, channel));
-                        System.out.println(server.getLastMessages(100));
-                        break;
-                    }
-                    case "exit":
-                        break label;
-                    default:
-                        System.out.println("Vale sisend");
-                        break;
-                }
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("Sisesta kasutajanimi");
+            String name = sc.nextLine();
+            System.out.println("Sisesta serveri aadress vormis ip:port");
+            String address = sc.nextLine();
+            int port = Integer.parseInt(address.split(":")[1]);
+            String ip = address.split(":")[0];
+            System.out.println("Sisesta parool");
+            String password = sc.nextLine();
+            ClientInfo info = new ClientInfo(name, name, ip, port, password);
+            try {
+                server.start(info);
+            } catch (ServerConnection.LoginException e) {
+                // TODO väljasta see
+                System.out.println(e.getMessage());
+                continue;
+            }
+            break;
+        }
+        while (true) {
+            System.out.println("Kas tahad sõnumi saata või viimast sõnumit lugeda? (s/l/exit)");
+            String input = sc.nextLine();
+            switch (input) {
+                case "s":
+                    System.out.println("Sisesta sõnum");
+                    String message = sc.nextLine();
+                    System.out.println(server.sendMessage(message, "K1"));
+                case "l":
+                    System.out.println(server.getLastMessages(100));
+                case "exit":
+                    break;
+                default:
+                    System.out.println("Sisesta s, l või exit");
             }
         }
     }
-
 }
