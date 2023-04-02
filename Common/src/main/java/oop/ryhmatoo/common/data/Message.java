@@ -3,6 +3,8 @@ package oop.ryhmatoo.common.data;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Andmeklass mis kirjeldab sõnumi
@@ -25,6 +27,14 @@ public record Message(String sender, String channel, String content, long timest
         String channel = dis.readUTF();
         String content = dis.readUTF();
         long timestamp = dis.readLong();
+        return new Message(sender, channel, content, timestamp);
+    }
+
+    public static Message from(ResultSet rs) throws SQLException {
+        String sender = rs.getString("sender");
+        String channel = rs.getString("channel");
+        String content = rs.getString("message");
+        long timestamp = rs.getLong("time");
         return new Message(sender, channel, content, timestamp);
     }
 

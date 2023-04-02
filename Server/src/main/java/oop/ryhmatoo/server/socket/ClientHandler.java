@@ -84,10 +84,10 @@ public class ClientHandler implements Runnable {
             String channel = dis.readUTF();
             long timestamp = new Date().getTime() / 1000;
             Message msg = new Message(this.info.displayName(), channel, message, timestamp);
-            Server.getInstance().onMessage(this.info, msg); // Edastan info
             ResponseHeader rs = new ResponseHeader(1,
                     "OK");
             rs.write(dos);
+            Server.getInstance().onMessage(this.info, msg); // Edastan info
         } catch (IOException e) {
             ResponseHeader rs = new ResponseHeader(0,
                     "Lugemise viga: " + e.getMessage());

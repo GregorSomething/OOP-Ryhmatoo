@@ -1,6 +1,8 @@
 package oop.ryhmatoo.server;
 
 import oop.ryhmatoo.common.data.Message;
+import oop.ryhmatoo.server.data.Database;
+import oop.ryhmatoo.server.data.MessageStorage;
 import oop.ryhmatoo.server.socket.AuthService;
 import oop.ryhmatoo.server.socket.SocetMain;
 import oop.ryhmatoo.server.socket.data.ClientInfo;
@@ -26,13 +28,17 @@ public class Server {
     private final ExecutorService executor;
     private final AuthService authService;
     private final SocetMain socetMain;
+    private final Database database;
     private HashMap<String, String> logins;
     private List<Message> inMemoryMessageStorage;
+    private MessageStorage messageStorage;
 
     public Server(String[] args) throws IOException {
         Server.instance = this;
         // Asenda see millegi muuga, TODO
         this.inMemoryMessageStorage = new ArrayList<>();
+        this.database = new Database("data.sqlite");
+        this.messageStorage = new MessageStorage();
         this.executor = Executors.newFixedThreadPool(8);
         this.authService = new AuthService();
         this.socetMain = new SocetMain(PORT);
@@ -60,6 +66,7 @@ public class Server {
         // TODO: Asenda mõistlikuma asjaga :)
         System.out.printf("[%s] %s - %s%n", client.displayName(), message.channel(), message.content());
         this.inMemoryMessageStorage.add(message);
+        this.messageStorage.saveMessage(message);
     }
 
     /**
@@ -87,5 +94,11 @@ public class Server {
 
     public List<Message> getInMemoryMessageStorage() {
         return inMemoryMessageStorage;
+    public MessageStorage getMessageStorage() {
+        return this.messageStorage;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 }
