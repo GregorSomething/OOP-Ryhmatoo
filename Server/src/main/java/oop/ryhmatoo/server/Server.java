@@ -94,6 +94,8 @@ public class Server {
 
     public List<Message> getInMemoryMessageStorage() {
         return inMemoryMessageStorage;
+    }
+
     public MessageStorage getMessageStorage() {
         return this.messageStorage;
     }
