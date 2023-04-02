@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -101,12 +102,12 @@ public class ClientHandler implements Runnable {
             // TODO: Asenda korrektes asjaga
             int limit = dis.readInt();
             List<Message> messages = Server.getInstance().getInMemoryMessageStorage();
-
+            Collections.sort(messages);
+            Collections.reverse(messages);
             // saada response sest ma teen nii?
             ResponseHeader rs = new ResponseHeader(1,
                     "OK");
             rs.write(dos);
-
             // Saada sisu
             dos.writeInt(messages.size());
             for (Message m : messages) {

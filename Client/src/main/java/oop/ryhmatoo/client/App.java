@@ -53,10 +53,12 @@ public class App {
                 }
             } else if(input.equals("l")){
                 List<Message> messages = server.getLastMessages(1);
-                if(messages == null){
-                    System.out.println("Sõnumite lugemine ebaõnnestus");
+                if(messages == null || messages.size() == 0){
+                    System.out.println("Sõnumite lugemine ebaõnnestus või pole sõnumit mida lugeda");
                 } else {
-                    ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(messages.get(0).timestamp()), ZoneId.systemDefault());
+                    ZonedDateTime zonedDateTime = ZonedDateTime
+                            .ofInstant(Instant
+                                    .ofEpochSecond(messages.get(0).timestamp()), ZoneId.systemDefault());
                     System.out.println("[" + zonedDateTime.toLocalTime() + " " + zonedDateTime.toLocalDate() + "] " + messages.get(0).sender() + ": " + messages.get(0).content());
                 }
             } else if(input.equals("exit")){

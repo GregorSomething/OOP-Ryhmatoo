@@ -11,7 +11,7 @@ import java.io.IOException;
  * @param content sõnumi sisu
  * @param timestamp saatmisaeg
  */
-public record Message(String sender, String channel, String content, long timestamp) {
+public record Message(String sender, String channel, String content, long timestamp) implements Comparable<Message> {
 
     public void write(DataOutputStream dos) throws IOException {
         dos.writeUTF(sender);
@@ -26,5 +26,10 @@ public record Message(String sender, String channel, String content, long timest
         String content = dis.readUTF();
         long timestamp = dis.readLong();
         return new Message(sender, channel, content, timestamp);
+    }
+
+    @Override
+    public int compareTo(Message o) {
+        return Long.compare(this.timestamp, o.timestamp);
     }
 }
