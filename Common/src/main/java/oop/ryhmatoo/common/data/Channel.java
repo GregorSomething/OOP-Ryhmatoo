@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record Channel(String name, boolean canWrite, List<String> members, Type channelType) {
+public record Channel(String name, boolean canWrite, List<String> members, Type type) {
 
     @SneakyThrows
     public static Channel from(ResultSet rs) {

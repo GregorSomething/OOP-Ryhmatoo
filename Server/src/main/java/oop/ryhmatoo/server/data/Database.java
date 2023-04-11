@@ -61,7 +61,7 @@ public class Database {
     private void loadDatabase(String name) {
         File file = new File(name);
         if (file.exists() || Files.isRegularFile(Path.of(name))) return;
-        try (InputStream is = Server.getInstance().getClass()
+        try (InputStream is = this.getClass()
                 .getClassLoader().getResourceAsStream("data.sqlite");
              OutputStream out = new FileOutputStream(file)) {
 
@@ -85,5 +85,13 @@ public class Database {
             throw new RuntimeException(e);
         }
         return list;
+    }
+
+    public void close() {
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
