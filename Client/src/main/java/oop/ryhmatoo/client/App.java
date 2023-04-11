@@ -29,9 +29,9 @@ public class App {
             String ip = address.split(":")[0];
             System.out.println("Sisesta parool");
             String password = sc.nextLine();
-            ClientInfo info = new ClientInfo(name, name, ip, port, password);
+            //ClientInfo info = new ClientInfo(name, name, ip, port, password);
             try {
-                server.start(info);
+                server.start("info", "");
             } catch (ServerConnection.LoginException e) {
                 // TODO väljasta see
                 System.out.println(e.getMessage());
@@ -45,14 +45,14 @@ public class App {
             if(input.equals("s")){
                 System.out.println("Sisesta sõnum");
                 String message = sc.nextLine();
-                int status = server.sendMessage(message, "K1").status();
+                /*int status = server.sendMessage(message, "K1");//.status();
                 if(status == 1){
                     System.out.println("Sõnum saadetud");
                 } else {
                     System.out.println("Sõnumi saatmine ebaõnnestus");
-                }
+                }*/
             } else if(input.equals("l")){
-                List<Message> messages = server.getLastMessages(1);
+                List<Message> messages = server.getLastMessages(1, "");
                 if(messages == null || messages.size() == 0){
                     System.out.println("Sõnumite lugemine ebaõnnestus või pole sõnumit mida lugeda");
                 } else {
