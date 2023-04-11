@@ -1,44 +1,103 @@
 package oop.ryhmatoo.client.socket;
 
+import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
-import oop.ryhmatoo.common.data.ResponseHeader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Klass mis kirjeldab üldist serveriga suhtlust.
- * Abstract et saaks kasutada kui interfacet, milles osa meetodeid defineeritud
+ * Interface that describes client server communication
  */
 public interface ServerConnection {
 
     /**
-     * Loob ühenduse serveriga
-     * @param info sisselogimis andmed
-     * @throws LoginException sisselogimis viga
+     * Method that initialise server connection, makes this interfaces implementation class
+     * @param address server adress in form of "ip:port", if port is missing it will be set to default (10021)
+     * @return initialized Server connection object
+     * @throws IllegalArgumentException if address is not valid or server on that address does not exists
      */
-    void start(ClientInfo info) throws LoginException;
+    default ServerConnection connect(String address) throws IllegalArgumentException {
+        return null; // TODO: Asenda implementatsiooniga.
+    }
 
     /**
-     * Saadab sõnumi info serveri
-     * @param message sõnum
-     * @param channel kanal
-     * @return serverilt saadud vastus
-     * @throws IOException
+     * Checks if username and password are valid
+     * @param name username
+     * @param password password
+     * @return true it are valid, does not do log in, for that see {@link ServerConnection#start(String, String)}
      */
-    ResponseHeader sendMessage(String message, String channel) throws IOException;
+    boolean isValidCredentials(String name, String password);
 
     /**
-     * Tagastab viimased x sõnumit, kui neid on nii palju
-     * @param limit kui palju on vaja
-     * @return sõnumite listi, suurus ei pruugi olla sama mis limiit
-     * @throws IOException
+     * Creates new user, does not do log in, for that see {@link ServerConnection#start(String, String)}
+     * @param name username
+     * @param password password
+     * @param color chat color for this user
+     * @throws LoginException if name is already in use or name/password are not valid
      */
-    List<Message> getLastMessages(int limit) throws IOException;
+    void createNewUser(String name, String password, String color) throws LoginException;
+
+    /**
+     * Initializes main connection
+     * @param name username
+     * @param password password
+     * @throws LoginException if username ore password is not valid
+     */
+    void start(String name, String password) throws LoginException;
+
+    /**
+     * Gets currently active users, only names
+     * @return currently active/connected to server users.
+     */
+    List<String> getActiveUsers();
+
+    /**
+     * Gets all chats for this user
+     * @return all chats for this user.
+     */
+    List<Channel> getChats();
+
+    /**
+     * Gets last messages in channel
+     * @param limit how many messages
+     * @param channel in what channal where requested messages
+     * @return list of messages from that channel, NB! limit might not equal size of list
+     * @throws IllegalArgumentException thrown if channel did not exsist or limit was less than 0
+     */
+    List<Message> getLastMessages(int limit, String channel) throws IllegalArgumentException;
+
+    /**
+     * Sends message to server
+     * @param channel channel where the message was sent from, if channel does not exsist in server this will fail quietly
+     * @param content message content, String
+     */
+    void sendMessage(String channel, String content);
+
+    /**
+     * Sends file to server
+     * @param channel channel where the file was sent from, if channel does not exsist in server this will fail quietly
+     * @param file file reference
+     * @throws IOException exception that was thrown, when tying to send file to server
+     */
+    void sendFile(String channel, File file) throws IOException;
+
+    /**
+     * Registers message listener
+     * @param listener ...
+     */
     void registerMessageListener(Consumer<Message> listener);
 
-    public class LoginException extends Exception {
+    /**
+     * Registers channel listener, when new channel involving this user was created
+     * @param listener ...
+     */
+    void registerChanelListener(Consumer<Channel> listener);
+
+
+    class LoginException extends Exception {
         private final String message;
 
         public LoginException(String message) {

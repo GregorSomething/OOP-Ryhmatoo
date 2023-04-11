@@ -1,8 +1,6 @@
 package oop.ryhmatoo.client;
 
-import oop.ryhmatoo.client.socket.ClientInfo;
 import oop.ryhmatoo.client.socket.ServerConnection;
-import oop.ryhmatoo.client.socket.ServerConnectionImp;
 import oop.ryhmatoo.common.data.Message;
 
 import java.io.IOException;
@@ -16,9 +14,11 @@ import java.util.Scanner;
  * Hello world!
  */
 public class App {
+
+
     public static void main(String[] args) throws IOException {
         System.out.println("Tere tulemast chati!");
-        ServerConnection server = new ServerConnectionImp();
+        ServerConnection server = null;
         Scanner sc = new Scanner(System.in);
         while (true) {
             System.out.println("Sisesta kasutajanimi");
