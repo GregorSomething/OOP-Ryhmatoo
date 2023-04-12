@@ -74,7 +74,7 @@ public class Database {
         }
     }
 
-    public <T> List<T> queryAndMap(Statments statments, Function<ResultSet, T> mapper, Object... args) {
+    public <T> List<T> queryAndMap(SQLStatement statments, Function<ResultSet, T> mapper, Object... args) {
         ArrayList<T> list = new ArrayList<>();
         try (ResultSet rs = this.query(statments, args)) {
             if (!rs.isBeforeFirst()) return list;
