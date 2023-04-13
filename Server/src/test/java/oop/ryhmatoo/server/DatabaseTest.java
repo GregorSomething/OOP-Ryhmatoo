@@ -3,6 +3,7 @@ package oop.ryhmatoo.server;
 import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
 import oop.ryhmatoo.server.data.Database;
+import oop.ryhmatoo.server.data.records.ServerUser;
 import org.junit.*;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
@@ -47,6 +48,17 @@ public class DatabaseTest {
         List<Message> messages = database.getMessageStorage().getMessagesInChannelLimit("Test", 1000);
         assertEquals(1, messages.size());
         assertEquals(message, messages.get(0));
+    }
+
+    @Test
+    public void userReadWrite() throws SQLException {
+        String pwd = "hehSeeHea";
+        ServerUser user = ServerUser.from("Gregor", "#ffffff", pwd);
+        database.getUserStorage().saveNewUser(user);
+
+        ServerUser user2 = database.getUserStorage().getUser(user.name());
+        assertTrue(user2.isPassword(pwd));
+        assertArrayEquals(user.hashedPassword(), user2.hashedPassword());
     }
 
 }

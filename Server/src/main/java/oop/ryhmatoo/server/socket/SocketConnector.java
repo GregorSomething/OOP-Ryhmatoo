@@ -1,6 +1,5 @@
 package oop.ryhmatoo.server.socket;
 
-import lombok.SneakyThrows;
 import oop.ryhmatoo.server.Server;
 
 import java.io.IOException;
@@ -19,12 +18,15 @@ public class SocketConnector {
     }
 
     public void update() {
-        try {
-            this.handelNewConnection(socket.accept());
-        } catch (IOException e) {
-            if (this.socket.isClosed()) {
-                this.runningOn.interrupt();
-                System.out.println("ServerSocket is closed, terminating server stuff.");
+        while (true) {
+            try {
+                this.handelNewConnection(socket.accept());
+            } catch (IOException e) {
+                if (this.socket.isClosed()) {
+                    this.runningOn.interrupt();
+                    System.out.println("ServerSocket is closed, terminating server stuff.");
+                    return;
+                }
             }
         }
     }

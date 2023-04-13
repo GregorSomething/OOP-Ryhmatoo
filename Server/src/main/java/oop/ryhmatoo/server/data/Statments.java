@@ -13,7 +13,14 @@ public enum Statments implements SQLStatement {
     INSERT_CHANNEL("""
             INSERT INTO channels
             (name, canWrite, members, "type")
-            VALUES(?, ?, ?, ?);""");
+            VALUES(?, ?, ?, ?);"""),
+
+    GET_USER_BY_NAME("SELECT * FROM users WHERE name = ?;"),
+    INSERT_USER("""
+            INSERT INTO users
+            (name, color, salt, password)
+            VALUES(?, ?, ?, ?);
+            """);
 
     private final String content;
 

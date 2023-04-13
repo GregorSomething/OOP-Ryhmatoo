@@ -1,7 +1,9 @@
 package oop.ryhmatoo.server.data;
 
 import lombok.Getter;
-import oop.ryhmatoo.server.Server;
+import oop.ryhmatoo.server.data.storage.ChannelStorage;
+import oop.ryhmatoo.server.data.storage.MessageStorage;
+import oop.ryhmatoo.server.data.storage.UserStorage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,6 +20,8 @@ public class Database {
     private final MessageStorage messageStorage;
     @Getter
     private final ChannelStorage channelStorage;
+    @Getter
+    private final UserStorage userStorage;
 
     public Database(String name) {
         this.loadDatabase(name);
@@ -31,6 +35,7 @@ public class Database {
         }
         this.messageStorage = new MessageStorage(this);
         this.channelStorage = new ChannelStorage(this);
+        this.userStorage = new UserStorage(this);
     }
 
     public Connection getConnection() {

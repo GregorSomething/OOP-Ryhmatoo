@@ -1,6 +1,8 @@
-package oop.ryhmatoo.server.data;
+package oop.ryhmatoo.server.data.storage;
 
 import oop.ryhmatoo.common.data.Channel;
+import oop.ryhmatoo.server.data.Database;
+import oop.ryhmatoo.server.data.Statments;
 
 import java.sql.SQLException;
 import java.util.List;
