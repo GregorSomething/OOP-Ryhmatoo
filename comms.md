@@ -1,22 +1,23 @@
 ### Info
 See fail on mõeldud soceti suhtluse kirjeldamiseks.
 ### Algus
+100 - 199 -- Client -> Server  
+200 - 299 -- Server -> Client
 ````
-Client -> ClientInfo serverile  
-Server -> Response... (status 0 - error, status 1 - OK)  
-Client -> request/action {  
-  code 100 - send message  
-    string message
-    string channel
-  code 110 - request messages
-    string channel
-    int limit
-}
-Server -> request/action {  
-  code 400 - send message  
-    Messsage message
-  code 410 - message request response
-    int count
-    Message[] messages
-}
+100 -> ValidCredentialsRequest -> R200; // Kontrollib parooli õigsust
+101 -> CreateNewUserRequest -> R200; // Loob uue kasutaja
+102 -> ValidCredentialsRequest -> R200; // Tähendab alustab lugemist sellelt
+103 -> ValidCredentialsRequest -> R200; // Tähendab alustab kuulamist sellelt
+
+110 -> R210; // Küsis kanalid
+111 -> R211; // Küsib aktiivsed kasutajad
+112 -> MessageRequest -> R212; // Küsib kanalist sõnumeid
+
+200 -> LoginResponse; // Väljendab parooli õigsust
+
+210 -> List<Channels>; // Saadab ainult talle nähtavad kanalid
+211 -> List<String>; // Saadab aktiivsed kasutajad
+212 -> MessageRequestResponse; // Saadab sõnumid, message != null kui error oli, nt vale kanal
+
+220 -> Message; // Saadab just saadetud sõnumi
 ````

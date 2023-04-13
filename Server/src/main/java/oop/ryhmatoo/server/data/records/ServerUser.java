@@ -1,6 +1,7 @@
 package oop.ryhmatoo.server.data.records;
 
 import lombok.SneakyThrows;
+import oop.ryhmatoo.common.socket.request.CreateNewUserRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -28,6 +29,10 @@ public record ServerUser(String name, String color, byte[] salt, byte[] hashedPa
         random.nextBytes(salt);
 
         return new ServerUser(name, color, salt, ServerUser.hashPassword(password, salt));
+    }
+
+    public static ServerUser from(CreateNewUserRequest r) {
+        return ServerUser.from(r.name(), r.color(), r.password());
     }
 
     @SneakyThrows // Ma ei oleks seda niigi käsitlenud
