@@ -14,20 +14,16 @@ public class ChannelStorage {
         this.database = database;
     }
 
-    public List<Channel> getAllChannels() {
+    public List<Channel> getAllChannels() throws SQLException {
         return this.database.queryAndMap(Statments.GET_ALL_CHANNELS, Channel::from);
     }
 
-    public List<Channel> getChannelsForUser(String user) {
+    public List<Channel> getChannelsForUser(String user) throws SQLException {
         return this.database.queryAndMap(Statments.GET_ALL_CHANNELS_FOR_USER, Channel::from, user);
     }
 
-    public void saveNewChannel(Channel channel) {
+    public void saveNewChannel(Channel channel) throws SQLException {
         String members = ";" + channel.members().stream().collect(Collectors.joining(";")) + ";";
-        try {
-            this.database.execute(Statments.INSERT_CHANNEL, channel.name(), channel.canWrite(), members, channel.type());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        this.database.execute(Statments.INSERT_CHANNEL, channel.name(), channel.canWrite(), members, channel.type());
     }
 }

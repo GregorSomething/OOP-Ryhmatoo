@@ -74,15 +74,13 @@ public class Database {
         }
     }
 
-    public <T> List<T> queryAndMap(SQLStatement statments, Function<ResultSet, T> mapper, Object... args) {
+    public <T> List<T> queryAndMap(SQLStatement statments, Function<ResultSet, T> mapper, Object... args) throws SQLException {
         ArrayList<T> list = new ArrayList<>();
         try (ResultSet rs = this.query(statments, args)) {
             if (!rs.isBeforeFirst()) return list;
             while (rs.next()) {
                 list.add(mapper.apply(rs));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
         return list;
     }

@@ -8,6 +8,7 @@ import org.junit.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +29,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void channelReadWrite() {
+    public void channelReadWrite() throws SQLException {
         Channel channel = new Channel("Test", true, List.of("tu1", "tu2", "tu3"), Channel.Type.DIRECT_MESSAGE);
         database.getChannelStorage().saveNewChannel(channel);
 
@@ -39,7 +40,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void messageReadWrite() {
+    public void messageReadWrite() throws SQLException {
         Message message = new Message("tu1", "Test", "Terekest", 12345, Message.Type.MESSAGE);
         database.getMessageStorage().saveMessage(message);
 

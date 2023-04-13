@@ -15,21 +15,16 @@ public class MessageStorage {
         this.database = database;
     }
 
-    public List<Message> getAllMessages() {
+    public List<Message> getAllMessages() throws SQLException {
         return this.database.queryAndMap(Statments.GET_ALL_MESSAGES, Message::from);
     }
 
-    public List<Message> getMessagesInChannelLimit(String channel, int limit) {
+    public List<Message> getMessagesInChannelLimit(String channel, int limit) throws SQLException {
         return this.database.queryAndMap(Statments.GET_MESSAGES_IN_CHANNEL_LIMIT, Message::from, channel, limit);
     }
 
-    public void saveMessage(Message message) {
-        try {
-            this.database.execute(Statments.INSERT_MESSAGE, message.sender(),
-                    message.channel(), message.content(), message.timestamp(), message.type());
-        } catch (SQLException e) {
-            // TODO, teemidagi.
-            throw new RuntimeException(e);
-        }
+    public void saveMessage(Message message) throws SQLException {
+        this.database.execute(Statments.INSERT_MESSAGE, message.sender(),
+                message.channel(), message.content(), message.timestamp(), message.type());
     }
 }
