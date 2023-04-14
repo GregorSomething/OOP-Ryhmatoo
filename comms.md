@@ -15,13 +15,13 @@ See fail on mõeldud soceti suhtluse kirjeldamiseks.
 112 -> MessageRequest -> R212; // Küsib kanalist sõnumeid
 
 120 -> Message; // Saadab sõnumi
-121 -> ChannelCreateRequest; // TODO!!
+121 -> ChannelCreateRequest; // Loob kui poel sama nimelits, saada läbi 221, ei vasta!
 
 200 -> LoginResponse; // Väljendab parooli õigsust
 
 210 -> List<Channels>; // Saadab ainult talle nähtavad kanalid
 211 -> List<String>; // Saadab aktiivsed kasutajad
-212 -> MessageRequestResponse; // Saadab sõnumid, message != null kui error oli, nt vale kanal
+212 -> List<Message>; // Saadab sõnumid, ka siis kui kanal oli vale
 
 220 -> Message; // Saadab just saadetud sõnumi
 221 -> Channel; // Saadab just loodud kanali

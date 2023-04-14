@@ -15,11 +15,9 @@ import java.sql.SQLException;
 
 public class ReadHandler implements SocketStateHandler {
 
-    private final SocketConnector main;
     private final JSONHelper helper;
 
     public ReadHandler() {
-        this.main = Server.getInstance().getSockets();
         this.helper = Server.getInstance().getJSONHelper();
     }
 
@@ -29,7 +27,7 @@ public class ReadHandler implements SocketStateHandler {
     }
 
     public boolean sendChannel(Channel channel) {
-        this.main.getSockets().stream()
+        Server.getInstance().getSockets().getSockets().stream()
                 .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET))
                 .filter(s -> channel.members().contains(s.getUsername()))
                 .forEach(s -> this.write(221, s, channel));
@@ -40,10 +38,9 @@ public class ReadHandler implements SocketStateHandler {
     public boolean sendMessage(Message message) {
         try {
             Channel messageChannel = Server.getInstance().getDatabase().getChannelStorage().getChannelByName(message.channel());
-
-            this.main.getSockets().stream()
+            Server.getInstance().getSockets().getSockets().stream()
                     .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET))
-                    .filter(s -> messageChannel.members().contains(s.getUsername()))
+                    .filter(s -> messageChannel == null || messageChannel.members().contains(s.getUsername()))
                     .forEach(s -> this.write(220, s, message));
 
             return true;

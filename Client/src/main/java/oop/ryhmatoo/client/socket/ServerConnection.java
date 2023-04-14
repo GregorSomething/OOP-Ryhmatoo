@@ -2,6 +2,7 @@ package oop.ryhmatoo.client.socket;
 
 import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
+import oop.ryhmatoo.common.socket.response.LoginResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * Interface that describes client server communication
  */
-public interface ServerConnection {
+public interface ServerConnection extends AutoCloseable {
 
     /**
      * Method that initialise server connection, makes this interfaces implementation class
@@ -19,17 +20,18 @@ public interface ServerConnection {
      * @return initialized Server connection object
      * @throws IllegalArgumentException if address is not valid or server on that address does not exists
      */
-    default ServerConnection connect(String address) throws IllegalArgumentException {
-        return null; // TODO: Asenda implementatsiooniga.
+    static ServerConnection connect(String address) throws IllegalArgumentException {
+        return new ServerConnectionImp(address);
     }
 
     /**
      * Checks if username and password are valid
-     * @param name username
+     *
+     * @param name     username
      * @param password password
      * @return true it are valid, does not do log in, for that see {@link ServerConnection#start(String, String)}
      */
-    boolean isValidCredentials(String name, String password);
+    LoginResponse isValidCredentials(String name, String password);
 
     /**
      * Creates new user, does not do log in, for that see {@link ServerConnection#start(String, String)}
@@ -85,6 +87,14 @@ public interface ServerConnection {
     void sendFile(String channel, File file) throws IOException;
 
     /**
+     * Creates new channel
+     * @param name name of the channel must be unique
+     * @param members members of this channel
+     * @param type channel type
+     */
+    void createNewChannel(String name, List<String> members, Channel.Type type);
+
+    /**
      * Registers message listener
      * @param listener ...
      */
@@ -94,7 +104,7 @@ public interface ServerConnection {
      * Registers channel listener, when new channel involving this user was created
      * @param listener ...
      */
-    void registerChanelListener(Consumer<Channel> listener);
+    void registerChannelListener(Consumer<Channel> listener);
 
 
     class LoginException extends Exception {

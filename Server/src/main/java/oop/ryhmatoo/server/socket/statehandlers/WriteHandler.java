@@ -1,7 +1,9 @@
 package oop.ryhmatoo.server.socket.statehandlers;
 
+import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
 import oop.ryhmatoo.common.socket.JSONHelper;
+import oop.ryhmatoo.common.socket.request.ChannelCreateRequest;
 import oop.ryhmatoo.common.socket.request.MessageRequest;
 import oop.ryhmatoo.server.Server;
 import oop.ryhmatoo.server.data.Database;
@@ -11,6 +13,7 @@ import oop.ryhmatoo.server.socket.SocketStateHandler;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class WriteHandler implements SocketStateHandler {
@@ -30,6 +33,7 @@ public class WriteHandler implements SocketStateHandler {
             case 112 -> this.handelMessageRequest(socket);
             case 111 -> this.handelActiveUserRequest(socket);
             case 120 -> this.handelMessageReceive(socket);
+            case 121 -> this.handelChannelCreateRequest(socket);
             default -> throw new IllegalStateException("Unexpected request code: " + code);
         };
     }
@@ -87,10 +91,29 @@ public class WriteHandler implements SocketStateHandler {
     private boolean handelMessageReceive(SocketHolder socket) {
         try {
             Message message = helper.readObjectFrom(socket.getDataInputStream(), Message.class);
-            Server.getInstance().onMessage(message);
+            // Korrigeerin sõnumi et kasutaja ei saaks valetada nime v aja osas.
+            Message messageCorrect = new Message(socket.getUsername(), message.channel(), message.content(), new Date().getTime(), message.type());
+            Server.getInstance().onMessage(messageCorrect);
             return true;
         } catch (IOException e) {
             System.out.println("Viga requesti käsitlemisel. handelMessageReceive " + e.getMessage());
+            e.printStackTrace(); // Nii saan kiiremini debuggida
+            return false;
+        }
+    }
+
+    private boolean handelChannelCreateRequest(SocketHolder socket) {
+        try {
+            ChannelCreateRequest createRequest = helper.readObjectFrom(socket.getDataInputStream(), ChannelCreateRequest.class);
+            // Kontrolli kas see on olemas
+            Channel existingChannel = this.database.getChannelStorage().getChannelByName(createRequest.name());
+            if (existingChannel != null) return true;
+
+            Channel channel = new Channel(createRequest.name(), true, createRequest.members(), createRequest.type());
+            Server.getInstance().onChannelCreate(channel);
+            return true;
+        } catch (IOException | SQLException e) {
+            System.out.println("Viga requesti käsitlemisel. handelChannelCreateReceive " + e.getMessage());
             e.printStackTrace(); // Nii saan kiiremini debuggida
             return false;
         }

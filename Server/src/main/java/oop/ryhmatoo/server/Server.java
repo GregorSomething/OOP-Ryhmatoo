@@ -1,10 +1,13 @@
 package oop.ryhmatoo.server;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
+import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
 import oop.ryhmatoo.common.socket.JSONHelper;
 import oop.ryhmatoo.server.data.Database;
 import oop.ryhmatoo.server.socket.SocketConnector;
+import oop.ryhmatoo.server.socket.statehandlers.ReadHandler;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -36,8 +39,18 @@ public class Server {
         new Server(args);
     }
 
+    @SneakyThrows
     public void onMessage(Message message) {
         System.out.println(message);
+        this.database.getMessageStorage().saveMessage(message);
+        this.sockets.getStateHandler().sendMessage(message);
+    }
+
+    @SneakyThrows
+    public void onChannelCreate(Channel channel) {
+        System.out.println(channel);
+        this.database.getChannelStorage().saveNewChannel(channel);
+        this.sockets.getStateHandler().sendChannel(channel);
     }
 
     public static Server getInstance() {
