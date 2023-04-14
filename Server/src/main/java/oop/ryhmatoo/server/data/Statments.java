@@ -10,6 +10,7 @@ public enum Statments implements SQLStatement {
 
     GET_ALL_CHANNELS("SELECT * FROM channels;"),
     GET_ALL_CHANNELS_FOR_USER("SELECT * FROM channels WHERE members LIKE '%;' || ? || ';%';"),
+    GET_CHANNEL_BY_NAME("SELECT * FROM channels WHERE name = ?;"),
     INSERT_CHANNEL("""
             INSERT INTO channels
             (name, canWrite, members, "type")

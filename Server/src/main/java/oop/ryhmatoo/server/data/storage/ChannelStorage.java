@@ -28,4 +28,10 @@ public class ChannelStorage {
         String members = ";" + channel.members().stream().collect(Collectors.joining(";")) + ";";
         this.database.execute(Statments.INSERT_CHANNEL, channel.name(), channel.canWrite(), members, channel.type());
     }
+
+    public Channel getChannelByName(String name) throws SQLException {
+        return this.database.queryAndMap(Statments.GET_CHANNEL_BY_NAME, Channel::from, name)
+                .stream().filter(c -> c.name().equals(name)) // Osa andmebaase vördlevad caseinsensitiv modes
+                .reduce((c1, c2) -> c1).orElse(null);
+    }
 }
