@@ -14,9 +14,9 @@
 - [ ] Sisse logimine
 - [ ] Vanade chatite vaatamine
 - [ ] Uute chatide loomine/saatmine
-- [ ] Server <-> Client ühendus Socketiga (Gregor)
-- [ ] Andmeklasside (v Recordite) automaatne saatmine/lugemine (Socketiga) (Gregor)
+- [x] Server <-> Client ühendus Socketiga (Gregor)
+- [ ] ~~Andmeklasside (v Recordite) automaatne saatmine/lugemine (Socketiga)~~ (Gregor)
 - [ ] Kahe arvuti vahene ühendus (Karl Oskar)
 - [ ] Eri failide saatmine
-- [ ] Andmete salvestamine andmebaasi v faili
+- [x] Andmete salvestamine andmebaasi v faili (Gregor)
 - [ ] Lisada Siia vastavalt vajadusele
