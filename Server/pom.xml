@@ -28,6 +28,13 @@
             <artifactId>Common</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Client osa rühmatööst, testimiseks ainult -->
+        <dependency>
+            <groupId>oop.ryhmatoo.client</groupId>
+            <artifactId>Client</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Testimis asjandus -->
         <dependency>
             <groupId>junit</groupId>

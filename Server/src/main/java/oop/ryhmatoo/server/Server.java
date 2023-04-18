@@ -9,9 +9,11 @@ import oop.ryhmatoo.server.data.Database;
 import oop.ryhmatoo.server.socket.SocketConnector;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Server {
     private static final int THREADS = 10;
@@ -34,16 +36,21 @@ public class Server {
         LOG = Logger.getLogger("server");
     }
 
-    public Server(String[] args) throws IOException {
+    public Server(String dbName, int port) throws IOException {
         Server.instance = this;
         this.executorService = Executors.newFixedThreadPool(THREADS);
-        this.database = new Database("data.sqlite");
+        this.database = new Database(dbName);
         this.JSONHelper = new JSONHelper();
-        this.sockets = new SocketConnector(10021);
+        this.sockets = new SocketConnector(port);
     }
 
     public static void main(String[] args) throws IOException {
-        new Server(args);
+        String dbName = Arrays.stream(args).filter(s -> s.startsWith("-D"))
+                .findAny().orElse("data.sqlite");
+        int port = Arrays.stream(args).filter(s -> s.startsWith("-P"))
+                .mapToInt(s -> Integer.parseInt(s.replace("-P", "")))
+                .findAny().orElse(10021);
+        new Server(dbName, port);
     }
 
     @SneakyThrows

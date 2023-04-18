@@ -2,9 +2,6 @@ package oop.ryhmatoo.client;
 
 import oop.ryhmatoo.client.socket.ServerConnection;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class ServerConnectionDemo {
 
     public static void main(String[] args) {
