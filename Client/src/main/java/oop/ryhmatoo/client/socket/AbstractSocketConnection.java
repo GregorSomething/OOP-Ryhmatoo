@@ -9,7 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public abstract class AbstractSocketConnection {
+public abstract class AbstractSocketConnection implements AutoCloseable {
 
     protected final Socket socket;
     protected final DataInputStream dataInputStream;
@@ -33,10 +33,10 @@ public abstract class AbstractSocketConnection {
         return jsonHelper.readObjectFrom(this.dataInputStream, LoginResponse.class);
     }
 
+    @Override
     public void close() throws IOException {
-        this.dataOutputStream.writeInt(109);
-        this.dataInputStream.close();
-        this.dataOutputStream.close();
-        this.socket.close();
+        try (this.dataInputStream; this.dataOutputStream; this.socket) {
+            this.dataOutputStream.writeInt(109);
+        }
     }
 }

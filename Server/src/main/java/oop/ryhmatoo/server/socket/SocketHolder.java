@@ -46,6 +46,8 @@ public class SocketHolder {
 
     public void close() throws IOException {
         this.socket.close();
+        Server.LOG.info(String.format("Socket %s disconnectis serverist, nimi: %s, mode: %s.",
+                socket.toString(), this.username, this.state));
         this.state = State.CLOSED;
         Server.getInstance().getSockets().getSockets().remove(this);
     }
@@ -63,5 +65,14 @@ public class SocketHolder {
         READING_SOCKET,
         WRITING_SOCKET,
         CLOSED;
+    }
+
+    @Override
+    public String toString() {
+        return "SocketHolder{" +
+                "socket=" + socket +
+                ", state=" + state +
+                ", username='" + username + '\'' +
+                '}';
     }
 }

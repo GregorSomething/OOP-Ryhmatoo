@@ -7,11 +7,11 @@ import oop.ryhmatoo.common.data.Message;
 import oop.ryhmatoo.common.socket.JSONHelper;
 import oop.ryhmatoo.server.data.Database;
 import oop.ryhmatoo.server.socket.SocketConnector;
-import oop.ryhmatoo.server.socket.statehandlers.ReadHandler;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class Server {
     private static final int THREADS = 10;
@@ -26,6 +26,13 @@ public class Server {
     private final SocketConnector sockets;
     @Getter
     private final JSONHelper JSONHelper;
+    public static Logger LOG = null;
+
+    static {
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+                "[%1$tF %1$tT] [%4$s] %5$s %n");
+        LOG = Logger.getLogger("server");
+    }
 
     public Server(String[] args) throws IOException {
         Server.instance = this;

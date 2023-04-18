@@ -72,6 +72,8 @@ public class ServerConnectionImp implements ServerConnection {
                 this.readSocket.run();
                 return;
             }
+            this.readSocket.close();
+            this.readSocket = null;
             throw new LoginException(rsRead.message());
         } catch (IOException e) {
             throw new LoginException(e.getMessage());
@@ -149,7 +151,8 @@ public class ServerConnectionImp implements ServerConnection {
 
     @Override
     public void close() throws IOException {
-        if (this.writeSocket != null) this.writeSocket.close();
-        if (this.readSocket != null) this.readSocket.close();
+        try (this.writeSocket) {
+            if (this.readSocket != null) this.readSocket.close();
+        }
     }
 }

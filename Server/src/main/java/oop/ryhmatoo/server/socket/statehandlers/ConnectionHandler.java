@@ -104,6 +104,7 @@ public class ConnectionHandler implements SocketStateHandler {
             if (response.valid()) {
                 socket.setState(newState);
                 socket.setUsername(request.name());
+                Server.LOG.info(String.format("Socket %s logis sisse.", socket.toString()));
             }
 
             // Seab vastuse tüüp koodi

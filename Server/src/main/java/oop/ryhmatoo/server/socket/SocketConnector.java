@@ -44,6 +44,7 @@ public class SocketConnector {
     }
 
     private void handelNewConnection(Socket socket) {
+        Server.LOG.info(String.format("Socket %s ühendus serveriga.", socket.toString()));
         Server.getInstance().getExecutorService()
                 .submit(() -> new SocketHolder(socket));
     }
