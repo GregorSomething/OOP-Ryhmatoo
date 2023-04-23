@@ -11,6 +11,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import oop.ryhmatoo.client.socket.ServerConnection;
@@ -217,8 +219,8 @@ public class GUIApp extends Application {
                 if(username.isEmpty() || password.isEmpty() || color.isEmpty()) {
                     Label errorLabel = new Label("Please fill all fields");
                     userCreationGrid.add(errorLabel, 1, 5);
-                } else if (!color.equals("red") && !color.equals("green") && !color.equals("blue")) {
-                    Label errorLabel = new Label("Color must be red, green or blue");
+                } else if (!color.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+                    Label errorLabel = new Label("Color must be hex code");
                     userCreationGrid.add(errorLabel, 1, 5);
                 } else {
                     conn.createNewUser(username, password, color);
@@ -295,10 +297,9 @@ public class GUIApp extends Application {
         messageSide.setSpacing(10);
         messageSide.setPadding(new Insets(10));
 
-        TextArea messages = new TextArea();
+        TextFlow messages = new TextFlow();
         messages.setMinWidth(600);
         messages.setMinHeight(500);
-        messages.setEditable(false);
         messageSide.getChildren().add(messages);
 
         HBox messageInput = new HBox();
@@ -355,16 +356,51 @@ public class GUIApp extends Application {
                 Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
                 LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                Platform.runLater(() -> messages.appendText(formattedDateTime + " " + message.sender() + " " + message.content() + "\n"));
+                Platform.runLater(() -> {
+                    Text t = new Text(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
+                    messages.getChildren().add(t);
+                });
         }});
         conn.registerChannelListener(channel -> Platform.runLater(() -> updateChatsList(channelList)));
 
-        Scene chatScene = new Scene(root, 1100, 600);
+        ListView<String> userList = new ListView<>();
+        userList.setMinWidth(200);
+        userList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                }
+            }
+        });
+        root.getChildren().add(userList);
+
+        Scene chatScene = new Scene(root, 1400, 800);
         chatStage.setScene(chatScene);
         chatStage.show();
 
         updateChatsList(channelList);
+        if(channelList.getItems().size() > 0) {
+            selectedChannel = channelList.getItems().get(0);
+        }
         updateMessagesList(messages, selectedChannel);
+        updateUserList(userList, selectedChannel);
+    }
+
+    private void updateUserList(ListView<String> userList, Channel channel) {
+        userList.getItems().clear();
+        for(String user : channel.members()) {
+            String status;
+            if(conn.getActiveUsers().contains(user)) {
+                status = " (online)";
+            } else {
+                status = " (offline)";
+            }
+            userList.getItems().add(user + status);
+        }
     }
 
     /**
@@ -372,14 +408,14 @@ public class GUIApp extends Application {
      * @param messages the text area to update
      * @param channel the channel to get the messages from
      */
-    private void updateMessagesList(TextArea messages, Channel channel) {
-        messages.clear();
-        messages.appendText("Beginning of message history\n");
+    private void updateMessagesList(TextFlow messages, Channel channel) {
+        messages.getChildren().clear();
         conn.getLastMessages(10, channel.name()).forEach(message -> {
             Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
             LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            messages.appendText(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
+            Text t = new Text(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
+            messages.getChildren().add(t);
         });
     }
 
@@ -414,7 +450,12 @@ public class GUIApp extends Application {
         createButton.setOnAction(event -> {
             List<String> members = membersComboBox.getItems();
             members.add(user);
-            conn.createNewChannel(nameTextField.getText(), members, Channel.Type.CHANNEL);
+            try {
+                conn.createNewChannel(nameTextField.getText(), members, Channel.Type.CHANNEL);
+            } catch (Exception e) {
+                Label errorLabel = new Label(e.getMessage());
+                popupRoot.getChildren().add(errorLabel);
+            }
             popupStage.close();
         });
 
@@ -430,7 +471,7 @@ public class GUIApp extends Application {
      * Updates the list of chats
      * @param chats the list view to update
      */
-    public void updateChatsList(ListView<Channel> chats) {
+    private void updateChatsList(ListView<Channel> chats) {
         List<Channel> channels = conn.getChats();
         chats.getItems().clear();
         chats.getItems().addAll(channels);
