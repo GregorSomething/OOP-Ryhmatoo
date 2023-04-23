@@ -20,6 +20,8 @@
     <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
+
+
   <dependencies>
     <dependency>
       <groupId>oop.ryhmatoo.common</groupId>
@@ -38,9 +40,25 @@
           <version>1.18.26</version>
           <scope>compile</scope>
       </dependency>
+    <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>20.0.1</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>
-
+    <plugins>
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <configuration>
+          <mainClass>oop.ryhmatoo.client.GUIApp</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
