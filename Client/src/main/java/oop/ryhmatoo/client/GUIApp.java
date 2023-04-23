@@ -1,117 +1,179 @@
 package oop.ryhmatoo.client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.val;
 import oop.ryhmatoo.client.socket.ServerConnection;
+import oop.ryhmatoo.common.data.Channel;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
+
 
 public class GUIApp extends Application {
+    private ServerConnection conn;
+
+    private String user;
+    private Channel selectedChannel;
+
+    /**
+     * Starts the GUI
+     * @param primaryStage the primary stage
+     */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("IP Checker");
 
-        // create a grid pane for the user interface
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        // add IP address label and text field to the grid pane
         Label ipLabel = new Label("Enter IP address:");
         grid.add(ipLabel, 0, 0);
         TextField ipTextField = new TextField();
         grid.add(ipTextField, 1, 0);
 
-        // add connect button to the grid pane
         Button connectButton = new Button("Connect");
         grid.add(connectButton, 1, 1);
 
-        // set action for connect button
-        connectButton.setOnAction(e -> {
-            String ip = ipTextField.getText();
-            try (ServerConnection conn = ServerConnection.connect(ip)){
+        //add a button for default address
+        Button defaultButton = new Button("Default Connection");
+        grid.add(defaultButton, 0, 1);
+        defaultButton.setOnAction(e -> {
+            String ip = "127.0.0.1:10021";
+            try {
+                conn = ServerConnection.connect(ip);
                 primaryStage.hide();
-                showLoginPage(conn);
+                showLoginPage();
             } catch (Exception exception) {
                 //add an error message to the screen
-                val errorLabel = new Label("Connection failed");
+                Label errorLabel = new Label("Connection failed");
+                grid.add(errorLabel, 1, 2);
+            }
+        });
+        connectButton.setOnAction(e -> {
+            String ip = ipTextField.getText();
+            try {
+                conn = ServerConnection.connect(ip);
+                primaryStage.hide();
+                showLoginPage();
+            } catch (Exception exception) {
+                //add an error message to the screen
+                Label errorLabel = new Label("Connection failed");
                 grid.add(errorLabel, 1, 2);
             }
         });
 
-        // create scene and set it in the stage
+        keyBoardInput(grid, connectButton);
         Scene scene = new Scene(grid, 400, 300);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void showLoginPage(ServerConnection conn) {
+    /**
+     * Shows the login page
+     */
+    private void showLoginPage() {
         Stage loginStage = new Stage();
         loginStage.setTitle("Login");
 
-        // create a grid pane for the login UI
         GridPane loginGrid = new GridPane();
         loginGrid.setAlignment(Pos.CENTER);
         loginGrid.setHgap(10);
         loginGrid.setVgap(10);
         loginGrid.setPadding(new Insets(25, 25, 25, 25));
 
-        // add username label and text field to the login UI
         Label usernameLabel = new Label("Username:");
         loginGrid.add(usernameLabel, 0, 0);
         TextField usernameTextField = new TextField();
         loginGrid.add(usernameTextField, 1, 0);
 
-        // add password label and password field to the login UI
         Label passwordLabel = new Label("Password:");
         loginGrid.add(passwordLabel, 0, 1);
         PasswordField passwordField = new PasswordField();
         loginGrid.add(passwordField, 1, 1);
 
-        // add login button to the login UI
         Button loginButton = new Button("Login");
         loginGrid.add(loginButton, 1, 2);
 
-        // set action for login button
         loginButton.setOnAction(e -> {
             String username = usernameTextField.getText();
             String password = passwordField.getText();
             try {
-                conn.start(username, password);
-                loginStage.hide();
-                showChatPage(conn);
-            } catch (ServerConnection.LoginException ex) {
-                Label errorLabel = new Label(ex.getMessage());
-                loginGrid.add(errorLabel, 1, 3);
+                if(conn.isValidCredentials(username, password).valid()){
+                    loginStage.hide();
+                    showChatPage(username, password);
+                } else {
+                    Label errorLabel = new Label("Invalid credentials");
+                    loginGrid.getChildren().remove(6);
+                    loginGrid.add(errorLabel, 1, 4);
+                }
+            } catch (Exception exception) {
+                Label errorLabel = new Label("Username or password is empty.");
+                if(loginGrid.getChildren().size() > 6) {
+                    loginGrid.getChildren().remove(6);
+                }
+                loginGrid.add(errorLabel, 1, 4);
             }
         });
 
-        // create scene and set it in the login stage
         Scene loginScene = new Scene(loginGrid, 400, 300);
         loginStage.setScene(loginScene);
         loginStage.show();
 
-        //add a button to create a new user
         Button createNewUserButton = new Button("Create new user");
         loginGrid.add(createNewUserButton, 1, 3);
 
         createNewUserButton.setOnAction(e -> {
             loginStage.hide();
-            showUserCreationPage(conn);
+            showUserCreationPage();
+        });
+
+        keyBoardInput(loginGrid, loginButton);
+    }
+
+    /**
+     * Sets default keyboard input for a button and pane
+     * @param pane pane which action is coming from
+     * @param button Button which action is coming from
+     */
+    private void keyBoardInput(GridPane pane, Button button) {
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                button.fire();
+            } else if (event.getCode() == KeyCode.ESCAPE) {
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    System.err.println("Failed to close connection");
+                }
+                Platform.exit();
+            }
         });
     }
 
-    public void showUserCreationPage(ServerConnection conn){
+    /**
+     * Shows the user creation page
+     */
+    private void showUserCreationPage(){
         Stage userCreationStage = new Stage();
         userCreationStage.setTitle("Create new user");
 
@@ -139,6 +201,13 @@ public class GUIApp extends Application {
         Button createUserButton = new Button("Create user");
         userCreationGrid.add(createUserButton, 1, 4);
 
+        Button backButton = new Button("Back");
+        userCreationGrid.add(backButton, 1, 5);
+        backButton.setOnAction(e -> {
+            userCreationStage.hide();
+            showLoginPage();
+        });
+
         createUserButton.setOnAction(e -> {
             String username = usernameTextField.getText();
             String password = passwordField.getText();
@@ -154,7 +223,7 @@ public class GUIApp extends Application {
                 } else {
                     conn.createNewUser(username, password, color);
                     userCreationStage.hide();
-                    showLoginPage(conn);
+                    showLoginPage();
                 }
             } catch (ServerConnection.LoginException exception) {
                 Label errorLabel = new Label(exception.getMessage());
@@ -165,13 +234,223 @@ public class GUIApp extends Application {
         Scene userCreationScene = new Scene(userCreationGrid, 400, 300);
         userCreationStage.setScene(userCreationScene);
         userCreationStage.show();
+
+        userCreationGrid.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                createUserButton.fire();
+            } else if (event.getCode() == KeyCode.ESCAPE) {
+                backButton.fire();
+            }
+        });
     }
 
-    public void showChatPage(ServerConnection conn){
+    /**
+     * Shows the chat page
+     * @param username the username of the user
+     * @param password the password of the user
+     */
+    private void showChatPage(String username, String password) {
+        try {
+            conn.start(username, password);
+        } catch (ServerConnection.LoginException e) {
+            System.err.println("Failed to start connection");
+            Platform.exit();
+        }
+        user = username;
+        selectedChannel = null;
 
+        Stage chatStage = new Stage();
+        chatStage.setTitle("Chat - Logged in as " + username);
+        HBox root = new HBox();
+        root.setSpacing(10);
+        root.setPadding(new Insets(10));
+
+        VBox channelSide = new VBox();
+        channelSide.setSpacing(10);
+        channelSide.setPadding(new Insets(10));
+
+        ListView<Channel> channelList = new ListView<>();
+        channelList.setMinWidth(200);
+        channelList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Channel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.name() == null) {
+                    setText(null);
+                } else {
+                    setText(item.name());
+                }
+            }
+        });
+
+        channelSide.getChildren().add(channelList);
+
+        Button createChannelButton = new Button("Create new channel");
+        channelSide.getChildren().add(createChannelButton);
+        createChannelButton.setOnAction(e -> createNewChannelPopup());
+
+        root.getChildren().add(channelSide);
+
+        VBox messageSide = new VBox();
+        messageSide.setSpacing(10);
+        messageSide.setPadding(new Insets(10));
+
+        TextArea messages = new TextArea();
+        messages.setMinWidth(600);
+        messages.setMinHeight(500);
+        messages.setEditable(false);
+        messageSide.getChildren().add(messages);
+
+        HBox messageInput = new HBox();
+        messageInput.setSpacing(10);
+        messageInput.setPadding(new Insets(10));
+        TextField messageTextField = new TextField();
+        messageTextField.setMinWidth(600);
+        Button sendButton = new Button("Send");
+        Button fileButton = new Button("File");
+        messageInput.getChildren().addAll(messageTextField, sendButton, fileButton);
+        messageSide.getChildren().add(messageInput);
+        root.getChildren().add(messageSide);
+
+        channelList.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                Channel channel = channelList.getSelectionModel().getSelectedItem();
+                if (channel != null) {
+                    chatStage.setTitle("Chat - " + channel.name() + " - Logged in as " + user);
+                    selectedChannel = channel;
+                    updateMessagesList(messages, channel);
+                }
+            }
+        });
+
+        sendButton.setOnAction(e -> {
+            String message = messageTextField.getText();
+            if (!message.isEmpty()) {
+                conn.sendMessage(selectedChannel.name(), message);
+                messageTextField.clear();
+            }
+        });
+
+        fileButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            File file = fileChooser.showOpenDialog(chatStage);
+            if (file != null) {
+                try {
+                    conn.sendFile(selectedChannel.name(), file);
+                } catch (IOException ex) {
+                    System.out.println("Failed to send file");
+                }
+            }
+        });
+
+        messageTextField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                sendButton.fire();
+            }
+        });
+
+        conn.registerMessageListener(message -> {
+            if (message.channel().equals(selectedChannel.name())) {
+                Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
+                LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                Platform.runLater(() -> messages.appendText(formattedDateTime + " " + message.sender() + " " + message.content() + "\n"));
+        }});
+        conn.registerChannelListener(channel -> Platform.runLater(() -> updateChatsList(channelList)));
+
+        Scene chatScene = new Scene(root, 1100, 600);
+        chatStage.setScene(chatScene);
+        chatStage.show();
+
+        updateChatsList(channelList);
+        updateMessagesList(messages, selectedChannel);
     }
 
+    /**
+     * Updates the list of messages
+     * @param messages the text area to update
+     * @param channel the channel to get the messages from
+     */
+    private void updateMessagesList(TextArea messages, Channel channel) {
+        messages.clear();
+        messages.appendText("Beginning of message history\n");
+        conn.getLastMessages(10, channel.name()).forEach(message -> {
+            Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            messages.appendText(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
+        });
+    }
+
+    /**
+     * Creates the popup for creating a new channel
+     */
+    private void createNewChannelPopup() {
+        // Show a popup to create a new channel
+        Stage popupStage = new Stage();
+        VBox popupRoot = new VBox();
+        Label titleLabel = new Label("Create new channel");
+        TextField nameTextField = new TextField();
+        ComboBox<String> membersComboBox = new ComboBox<>();
+        Button createButton = new Button("Create");
+
+        popupRoot.setSpacing(10);
+        popupRoot.setPadding(new Insets(10));
+        membersComboBox.setMinWidth(200);
+
+        List<String> activeUsers = conn.getActiveUsers();
+        activeUsers.remove(user);
+        membersComboBox.getItems().addAll(activeUsers);
+        membersComboBox.getSelectionModel().selectFirst();
+
+        membersComboBox.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    membersComboBox.getItems().remove(newValue);
+                    membersComboBox.getItems().add(0, newValue);
+                    membersComboBox.getSelectionModel().selectFirst();
+                });
+
+        createButton.setOnAction(event -> {
+            List<String> members = membersComboBox.getItems();
+            members.add(user);
+            conn.createNewChannel(nameTextField.getText(), members, Channel.Type.CHANNEL);
+            popupStage.close();
+        });
+
+
+        popupRoot.getChildren().addAll(titleLabel, new Label("Name:"), nameTextField,
+                new Label("Members:"), membersComboBox, createButton);
+        Scene popupScene = new Scene(popupRoot, 400, 300);
+        popupStage.setScene(popupScene);
+        popupStage.show();
+    }
+
+    /**
+     * Updates the list of chats
+     * @param chats the list view to update
+     */
+    public void updateChatsList(ListView<Channel> chats) {
+        List<Channel> channels = conn.getChats();
+        chats.getItems().clear();
+        chats.getItems().addAll(channels);
+        chats.getSelectionModel().selectFirst();
+    }
+
+    /**
+     * Launches the application
+     * @param args not used
+     */
     public static void main(String[] args) {
         launch();
+    }
+
+    /**
+     * Stops the application
+     */
+    @Override
+    public void stop() throws Exception {
+        conn.close();
+        super.stop();
     }
 }

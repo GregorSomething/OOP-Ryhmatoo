@@ -16,7 +16,7 @@ public interface ServerConnection extends AutoCloseable {
 
     /**
      * Method that initialise server connection, makes this interfaces implementation class
-     * @param address server adress in form of "ip:port", if port is missing it will be set to default (10021)
+     * @param address server address in form of "ip:port", if port is missing it will be set to default (10021)
      * @return initialized Server connection object
      * @throws IllegalArgumentException if address is not valid or server on that address does not exists
      */
