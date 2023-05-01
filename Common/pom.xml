@@ -5,12 +5,12 @@
     <parent>
         <artifactId>Chat-App</artifactId>
         <groupId>oop.ryhmatoo</groupId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>oop.ryhmatoo.common</groupId>
     <artifactId>Common</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>Common</name>
 

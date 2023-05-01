@@ -5,12 +5,12 @@
     <parent>
         <artifactId>Chat-App</artifactId>
         <groupId>oop.ryhmatoo</groupId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>oop.ryhmatoo.server</groupId>
     <artifactId>Server</artifactId>
-    <version>${revision}</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Server</name>
@@ -26,13 +26,14 @@
         <dependency>
             <groupId>oop.ryhmatoo.common</groupId>
             <artifactId>Common</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Client osa rühmatööst, testimiseks ainult -->
         <dependency>
             <groupId>oop.ryhmatoo.client</groupId>
             <artifactId>Client</artifactId>
-            <version>${revision}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <!-- Testimis asjandus -->
