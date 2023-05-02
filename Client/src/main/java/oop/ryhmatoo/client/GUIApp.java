@@ -392,9 +392,10 @@ public class GUIApp extends Application {
 
     private void updateUserList(ListView<String> userList, Channel channel) {
         userList.getItems().clear();
+        List<String> activeUsers = conn.getActiveUsers();
         for(String user : channel.members()) {
             String status;
-            if(conn.getActiveUsers().contains(user)) {
+            if(activeUsers.contains(user)) {
                 status = " (online)";
             } else {
                 status = " (offline)";
