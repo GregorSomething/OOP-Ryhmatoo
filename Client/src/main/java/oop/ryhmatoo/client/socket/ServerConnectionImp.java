@@ -115,7 +115,7 @@ public class ServerConnectionImp implements ServerConnection {
     public void sendMessage(String channel, String content) {
         try {
             this.writeSocket.sendMessage(
-                    new Message("PoleOluline", channel, content, 1, Message.Type.MESSAGE));
+                    new Message("PoleOluline", "-", channel, content, 1, Message.Type.MESSAGE));
         } catch (IOException e) {
             // Server pole ei tokiks olla kinni kui kasutaja kirjutab.
             // Välistatud ühenduse loomisega.

@@ -42,7 +42,7 @@ public class DatabaseTest {
 
     @Test
     public void messageReadWrite() throws SQLException {
-        Message message = new Message("tu1", "Test", "Terekest", 12345, Message.Type.MESSAGE);
+        Message message = new Message("tu1", null, "Test", "Terekest", 12345, Message.Type.MESSAGE);
         database.getMessageStorage().saveMessage(message);
 
         List<Message> messages = database.getMessageStorage().getMessagesInChannelLimit("Test", 1000);

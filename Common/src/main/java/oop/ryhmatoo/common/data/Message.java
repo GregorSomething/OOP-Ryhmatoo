@@ -7,11 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 // TODO: Nime esimesed viis sümboli on värvi koord talle omane
-public record Message(String sender, String channel, String content, long timestamp, Type type) implements Comparable<Message> {
+public record Message(String sender, String senderColor, String channel, String content, long timestamp, Type type) implements Comparable<Message> {
 
     @SneakyThrows
     public static Message from(ResultSet rs) {
         return new Message(rs.getString("sender"),
+                rs.getString("s_color"),
                 rs.getString("channel"),
                 rs.getString("content"),
                 rs.getLong("timestamp"),

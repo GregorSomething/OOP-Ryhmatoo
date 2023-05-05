@@ -103,7 +103,7 @@ public class ConnectionHandler implements SocketStateHandler {
             // Kui parool ja nimi oli õige, muuda state. Seab ka kasutaja nime.
             if (response.valid()) {
                 socket.setState(newState);
-                socket.setUsername(request.name());
+                socket.setUser(userStorage.getUser(request.name()));
                 Server.LOG.info(String.format("Socket %s logis sisse.", socket.toString()));
             }
 
@@ -113,7 +113,7 @@ public class ConnectionHandler implements SocketStateHandler {
             socket.getDataOutputStream().writeUTF(jsonHelper
                     .getMapper().writeValueAsString(response));
             return true;
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             System.out.println("Viga requesti käsitlemisel. handelValidCredentialsRequest " + e.getMessage());
             e.printStackTrace(); // Nii saan kiiremini debuggida
             return false;

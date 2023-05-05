@@ -44,7 +44,7 @@ public class WriteHandler implements SocketStateHandler {
             dos.writeInt(210);
             dos.writeUTF(this.helper.getListAsJSON(
                     this.database.getChannelStorage()
-                            .getChannelsForUser(socket.getUsername())));
+                            .getChannelsForUser(socket.getUser().name())));
             return true;
         } catch (IOException | SQLException e) {
             System.out.println("Viga requesti käsitlemisel. handelChannelRequest " + e.getMessage());
@@ -78,7 +78,7 @@ public class WriteHandler implements SocketStateHandler {
                     .getSockets().stream()
                     .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET)
                             || s.getState().equals(SocketHolder.State.WRITING_SOCKET))
-                    .map(SocketHolder::getUsername).distinct()
+                    .map(s -> s.getUser().name()).distinct()
                     .collect(Collectors.toList())));
             return true;
         } catch (IOException e) {
@@ -92,7 +92,7 @@ public class WriteHandler implements SocketStateHandler {
         try {
             Message message = helper.readObjectFrom(socket.getDataInputStream(), Message.class);
             // Korrigeerin sõnumi et kasutaja ei saaks valetada nime v aja osas.
-            Message messageCorrect = new Message(socket.getUsername(), message.channel(), message.content(), new Date().getTime(), message.type());
+            Message messageCorrect = new Message(socket.getUser().name(), socket.getUser().color() , message.channel(), message.content(), new Date().getTime(), message.type());
             Server.getInstance().onMessage(messageCorrect);
             return true;
         } catch (IOException e) {

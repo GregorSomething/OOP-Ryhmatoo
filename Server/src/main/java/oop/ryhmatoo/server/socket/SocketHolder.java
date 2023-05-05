@@ -3,6 +3,7 @@ package oop.ryhmatoo.server.socket;
 import lombok.Getter;
 import lombok.Setter;
 import oop.ryhmatoo.server.Server;
+import oop.ryhmatoo.server.data.records.ServerUser;
 import oop.ryhmatoo.server.socket.statehandlers.StateHandler;
 
 import java.io.DataInputStream;
@@ -16,7 +17,7 @@ public class SocketHolder {
     @Setter @Getter
     private State state = State.CONNECTED;
     @Setter @Getter
-    private String username = null;
+    private ServerUser user = null;
 
     @Getter
     private final DataInputStream dataInputStream;
@@ -47,7 +48,7 @@ public class SocketHolder {
     public void close() throws IOException {
         this.socket.close();
         Server.LOG.info(String.format("Socket %s disconnectis serverist, nimi: %s, mode: %s.",
-                socket.toString(), this.username, this.state));
+                socket.toString(), this.user.name(), this.state));
         this.state = State.CLOSED;
         Server.getInstance().getSockets().getSockets().remove(this);
     }
@@ -72,7 +73,7 @@ public class SocketHolder {
         return "SocketHolder{" +
                 "socket=" + socket +
                 ", state=" + state +
-                ", username='" + username + '\'' +
+                ", username='" + user + '\'' +
                 '}';
     }
 }

@@ -24,7 +24,7 @@ public class StateHandler {
     public void handel(int code, SocketHolder socket) {
         boolean ok = this.handlerMap.get(socket.getState()).handel(code, socket);
         if (!ok) {
-            System.out.printf("Failed to handel code %d, on user %s in state %s.", code, socket.getUsername(), socket.getState());
+            System.out.printf("Failed to handel code %d, on user %s in state %s.", code, socket.getUser().name(), socket.getState());
         }
     }
 

@@ -29,7 +29,7 @@ public class ReadHandler implements SocketStateHandler {
     public boolean sendChannel(Channel channel) {
         Server.getInstance().getSockets().getSockets().stream()
                 .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET))
-                .filter(s -> channel.members().contains(s.getUsername()))
+                .filter(s -> channel.members().contains(s.getUser().name()))
                 .forEach(s -> this.write(221, s, channel));
 
         return true;
@@ -40,7 +40,7 @@ public class ReadHandler implements SocketStateHandler {
             Channel messageChannel = Server.getInstance().getDatabase().getChannelStorage().getChannelByName(message.channel());
             Server.getInstance().getSockets().getSockets().stream()
                     .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET))
-                    .filter(s -> messageChannel == null || messageChannel.members().contains(s.getUsername()))
+                    .filter(s -> messageChannel == null || messageChannel.members().contains(s.getUser().name()))
                     .forEach(s -> this.write(220, s, message));
 
             return true;

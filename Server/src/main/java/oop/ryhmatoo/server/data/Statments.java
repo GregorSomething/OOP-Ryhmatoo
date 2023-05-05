@@ -1,8 +1,8 @@
 package oop.ryhmatoo.server.data;
 
 public enum Statments implements SQLStatement {
-    GET_ALL_MESSAGES("SELECT * FROM messages;"),
-    GET_MESSAGES_IN_CHANNEL_LIMIT("SELECT * FROM messages WHERE channel = ? LIMIT ?;"),
+    GET_ALL_MESSAGES("SELECT m.*, u.color AS s_color FROM messages m LEFT JOIN users u ON u.name = m.sender;"),
+    GET_MESSAGES_IN_CHANNEL_LIMIT("SELECT m.*, u.color AS s_color FROM messages m LEFT JOIN users u ON u.name = m.sender WHERE channel = ? LIMIT ?;"),
     INSERT_MESSAGE("""
             INSERT INTO messages
             (sender, channel, content, "timestamp", "type")
