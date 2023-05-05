@@ -6,6 +6,7 @@ import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
 import oop.ryhmatoo.common.socket.JSONHelper;
 import oop.ryhmatoo.server.data.Database;
+import oop.ryhmatoo.server.data.FileStorage;
 import oop.ryhmatoo.server.socket.SocketConnector;
 
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class Server {
     private static final int THREADS = 10;
@@ -39,6 +39,7 @@ public class Server {
     public Server(String dbName, int port) throws IOException {
         Server.instance = this;
         this.executorService = Executors.newFixedThreadPool(THREADS);
+        FileStorage.init();
         this.database = new Database(dbName);
         this.JSONHelper = new JSONHelper();
         this.sockets = new SocketConnector(port);

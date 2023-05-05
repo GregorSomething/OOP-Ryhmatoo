@@ -8,13 +8,19 @@ import oop.ryhmatoo.common.socket.request.CreateNewUserRequest;
 import oop.ryhmatoo.common.socket.request.MessageRequest;
 import oop.ryhmatoo.common.socket.response.LoginResponse;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class WriteSocket extends AbstractSocketConnection {
 
+    private final FileHandler fileHandler;
+
     public WriteSocket(String address, int port, JSONHelper jsonHelper) throws IOException {
         super(address, port, jsonHelper);
+        fileHandler = new FileHandler();
     }
 
     public LoginResponse createNewUser(String name, String color, String password) throws IOException {
@@ -58,5 +64,15 @@ public class WriteSocket extends AbstractSocketConnection {
     public void createNewChannel(ChannelCreateRequest request) throws IOException {
         this.dataOutputStream.writeInt(121);
         this.dataOutputStream.writeUTF(this.jsonHelper.getMapper().writeValueAsString(request));
+    }
+
+    public void sendFile(String channle, Path path, Message.Type type) throws IllegalArgumentException, IOException {
+        if (type.equals(Message.Type.MESSAGE))
+            throw new IllegalArgumentException("Use sendMessage instead.");
+        this.fileHandler.send(channle, path, type, this.dataOutputStream, this.jsonHelper);
+    }
+
+    public File getFile(String storageName) throws IOException {
+        return this.fileHandler.getFile(storageName, this.dataInputStream, this.dataOutputStream);
     }
 }

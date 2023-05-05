@@ -8,6 +8,7 @@ import oop.ryhmatoo.common.socket.response.LoginResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -124,8 +125,20 @@ public class ServerConnectionImp implements ServerConnection {
     }
 
     @Override
-    public void sendFile(String channel, File file) throws IOException {
-        throw new UnsupportedOperationException("See pole veel implementeeritud, ära kutsu seda veel.");
+    public void sendFile(String channel, File file, Message.Type type) throws IOException, IllegalArgumentException {
+        Path tofile = file.toPath(); // Palju parem asi millena hoida viide failile imo
+        this.writeSocket.sendFile(channel, tofile, type);
+    }
+
+    @Override
+    public File getFile(Message refMessage) {
+        if (refMessage.type().equals(Message.Type.MESSAGE))
+            throw new RuntimeException("Message is not file type message");
+        try {
+            return this.writeSocket.getFile(refMessage.content());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

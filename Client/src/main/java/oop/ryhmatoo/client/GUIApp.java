@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import oop.ryhmatoo.client.socket.ServerConnection;
 import oop.ryhmatoo.common.data.Channel;
+import oop.ryhmatoo.common.data.Message;
 
 import java.io.File;
 import java.io.IOException;
@@ -338,9 +339,11 @@ public class GUIApp extends Application {
             File file = fileChooser.showOpenDialog(chatStage);
             if (file != null) {
                 try {
-                    conn.sendFile(selectedChannel.name(), file);
+                    conn.sendFile(selectedChannel.name(), file, Message.Type.FILE);
                 } catch (IOException ex) {
                     System.out.println("Failed to send file");
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Kindel viga mida peaks käsitlema: " + ex.getMessage());
                 }
             }
         });

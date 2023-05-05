@@ -82,9 +82,18 @@ public interface ServerConnection extends AutoCloseable {
      * Sends file to server
      * @param channel channel where the file was sent from, if channel does not exsist in server this will fail quietly
      * @param file file reference
+     * @param type file type, not MESSAGE
      * @throws IOException exception that was thrown, when tying to send file to server
+     * @throws IllegalArgumentException if file does not exist, or if file is bigger than 8 Mb
      */
-    void sendFile(String channel, File file) throws IOException;
+    void sendFile(String channel, File file, Message.Type type) throws IOException, IllegalArgumentException;
+
+    /**
+     * Gets file from message
+     * @param refMessage message that has the file
+     * @return file object
+     */
+    File getFile(Message refMessage);
 
     /**
      * Creates new channel

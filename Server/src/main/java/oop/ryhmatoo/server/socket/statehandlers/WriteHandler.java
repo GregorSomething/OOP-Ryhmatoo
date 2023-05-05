@@ -7,6 +7,7 @@ import oop.ryhmatoo.common.socket.request.ChannelCreateRequest;
 import oop.ryhmatoo.common.socket.request.MessageRequest;
 import oop.ryhmatoo.server.Server;
 import oop.ryhmatoo.server.data.Database;
+import oop.ryhmatoo.server.data.FileStorage;
 import oop.ryhmatoo.server.socket.SocketHolder;
 import oop.ryhmatoo.server.socket.SocketStateHandler;
 
@@ -32,8 +33,10 @@ public class WriteHandler implements SocketStateHandler {
             case 110 -> this.handelChannelRequest(socket);
             case 112 -> this.handelMessageRequest(socket);
             case 111 -> this.handelActiveUserRequest(socket);
+            case 113 -> this.handleFileRequest(socket);
             case 120 -> this.handelMessageReceive(socket);
             case 121 -> this.handelChannelCreateRequest(socket);
+            case 122 -> this.handelFileReceive(socket);
             default -> throw new IllegalStateException("Unexpected request code: " + code);
         };
     }
@@ -92,11 +95,47 @@ public class WriteHandler implements SocketStateHandler {
         try {
             Message message = helper.readObjectFrom(socket.getDataInputStream(), Message.class);
             // Korrigeerin sõnumi et kasutaja ei saaks valetada nime v aja osas.
-            Message messageCorrect = new Message(socket.getUser().name(), socket.getUser().color() , message.channel(), message.content(), new Date().getTime(), message.type());
+            Message messageCorrect = new Message(socket.getUser().name(), socket.getUser().color(),
+                    message.channel(), message.content(), new Date().getTime(), message.type());
             Server.getInstance().onMessage(messageCorrect);
             return true;
         } catch (IOException e) {
             System.out.println("Viga requesti käsitlemisel. handelMessageReceive " + e.getMessage());
+            e.printStackTrace(); // Nii saan kiiremini debuggida
+            return false;
+        }
+    }
+
+    private boolean handelFileReceive(SocketHolder socket) {
+        try {
+            Message message = helper.readObjectFrom(socket.getDataInputStream(), Message.class);
+            int len = socket.getDataInputStream().readInt();
+            byte[] data = socket.getDataInputStream().readNBytes(len);
+
+            String newFileName = FileStorage.write(message.channel(), message.content(), data);
+            Message messageCorrect = new Message(socket.getUser().name(), socket.getUser().color(),
+                    message.channel(), newFileName, new Date().getTime(), message.type());
+
+            Server.getInstance().onMessage(messageCorrect);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Viga requesti käsitlemisel. handelFileReceive " + e.getMessage());
+            e.printStackTrace(); // Nii saan kiiremini debuggida
+            return false;
+        }
+    }
+
+    private boolean handleFileRequest(SocketHolder socket) {
+        try {
+            String name = socket.getDataInputStream().readUTF();
+            byte[] data = FileStorage.read(name);
+            DataOutputStream dos = socket.getDataOutputStream();
+            dos.writeInt(213);
+            dos.writeInt(data.length);
+            dos.write(data);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Viga requesti käsitlemisel. handleFileRequest " + e.getMessage());
             e.printStackTrace(); // Nii saan kiiremini debuggida
             return false;
         }
