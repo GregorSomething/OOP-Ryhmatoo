@@ -6,6 +6,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.paint.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -21,6 +25,10 @@ import oop.ryhmatoo.common.data.Message;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -359,10 +367,7 @@ public class GUIApp extends Application {
                 Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
                 LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                Platform.runLater(() -> {
-                    Text t = new Text(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
-                    messages.getChildren().add(t);
-                });
+                Platform.runLater(() -> handleMessage(messages,message,formattedDateTime));
         }});
         conn.registerChannelListener(channel -> Platform.runLater(() -> updateChatsList(channelList)));
 
@@ -418,9 +423,36 @@ public class GUIApp extends Application {
             Instant instant = Instant.ofEpochSecond(message.timestamp() / 1000);
             LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            Text t = new Text(formattedDateTime + " " + message.sender() + " " + message.content() + "\n");
-            messages.getChildren().add(t);
+            handleMessage(messages, message, formattedDateTime);
         });
+    }
+
+    private void handleMessage(TextFlow messages, Message message, String formattedDateTime) {
+        Text intro = new Text(formattedDateTime + " " + message.sender() + " ");
+        intro.setFill(Color.web(message.senderColor()));
+        messages.getChildren().add(intro);
+        if(message.type() == Message.Type.MESSAGE) {
+            Text t = new Text(message.content() + "\n");
+            t.setFill(Color.web(message.senderColor()));
+            messages.getChildren().add(t);
+        } else if(message.type() == Message.Type.FILE) {
+            Hyperlink link = new Hyperlink(message.content() + "\n");
+            link.setTextFill(Color.web(message.senderColor()));
+            messages.getChildren().add(link);
+            link.setOnAction(e -> {
+                File f = conn.getFile(message);
+                System.out.println(f.toPath());
+                try {
+                    Path path = Paths.get("/downloads");
+                    if (!Files.exists(path)) {
+                        Files.createDirectory(path);
+                    }
+                    Files.copy(f.toPath(), Paths.get("/downloads/" + f.getName()), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
     }
 
     /**
