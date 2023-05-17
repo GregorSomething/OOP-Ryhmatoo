@@ -125,7 +125,7 @@ public interface ServerConnection extends AutoCloseable {
      * Returns all users
      * @return usernames
      */
-    String getAllUsers();
+    List<String> getAllUsers();
 
     /**
      * Edits message

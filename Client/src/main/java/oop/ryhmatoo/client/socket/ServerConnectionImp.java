@@ -168,4 +168,35 @@ public class ServerConnectionImp implements ServerConnection {
             if (this.readSocket != null) this.readSocket.close();
         }
     }
+
+    @Override
+    public void registerUserListener(Consumer<String> listener) {
+        //TODO: Implement
+    }
+
+    @Override
+    public List<String> getAllUsers() {
+        // TODO: Implement
+        return List.of("See", "ei", "toimi", "veel");
+    }
+
+    @Override
+    public void editMessage(Message original, String newContent) {
+        // TODO: Implement
+    }
+
+    @Override
+    public void editChannel(Channel channel) {
+        // TODO: Implement
+    }
+
+    @Override
+    public void deleteMessage(Message message) {
+        // TODO: Implement
+    }
+
+    @Override
+    public void deleteChannel(Channel channel) {
+        // TODO: Implement
+    }
 }
