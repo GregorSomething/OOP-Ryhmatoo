@@ -51,8 +51,7 @@ public class WriteHandler implements SocketStateHandler {
                             .getChannelsForUser(socket.getUser().name())));
             return true;
         } catch (IOException | SQLException e) {
-            System.out.println("Viga requesti käsitlemisel. handelChannelRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelChannelRequest " + e.getMessage());
             return false;
         }
     }
@@ -68,8 +67,7 @@ public class WriteHandler implements SocketStateHandler {
 
             return true;
         } catch (IOException | SQLException e) {
-            System.out.println("Viga requesti käsitlemisel. handelMessageRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelMessageRequest " + e.getMessage());
             return false;
         }
     }
@@ -86,8 +84,7 @@ public class WriteHandler implements SocketStateHandler {
                     .collect(Collectors.toList())));
             return true;
         } catch (IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handelActiveUserRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelActiveUserRequest " + e.getMessage());
             return false;
         }
     }
@@ -101,8 +98,7 @@ public class WriteHandler implements SocketStateHandler {
             Server.getInstance().onMessage(messageCorrect);
             return true;
         } catch (IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handelMessageReceive " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelMessageReceive " + e.getMessage());
             return false;
         }
     }
@@ -120,8 +116,7 @@ public class WriteHandler implements SocketStateHandler {
             Server.getInstance().onMessage(messageCorrect);
             return true;
         } catch (IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handelFileReceive " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelFileReceive " + e.getMessage());
             return false;
         }
     }
@@ -136,8 +131,7 @@ public class WriteHandler implements SocketStateHandler {
             dos.write(data);
             return true;
         } catch (IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handleFileRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handleFileRequest " + e.getMessage());
             return false;
         }
     }
@@ -153,8 +147,7 @@ public class WriteHandler implements SocketStateHandler {
             Server.getInstance().onChannelCreate(channel);
             return true;
         } catch (IOException | SQLException e) {
-            System.out.println("Viga requesti käsitlemisel. handelChannelCreateReceive " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelChannelCreateReceive " + e.getMessage());
             return false;
         }
     }
@@ -163,12 +156,10 @@ public class WriteHandler implements SocketStateHandler {
         try {
             DataOutputStream dos = socket.getDataOutputStream();
             dos.writeInt(214);
-            // TODO
             dos.writeUTF(this.helper.getListAsJSON(this.database.getUserStorage().getAllUsernames()));
             return true;
         } catch (IOException | SQLException e) {
-            System.out.println("Viga requesti käsitlemisel. handelActiveUserRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelActiveUserRequest " + e.getMessage());
             return false;
         }
     }

@@ -127,31 +127,6 @@ public interface ServerConnection extends AutoCloseable {
      */
     List<String> getAllUsers();
 
-    /**
-     * Edits message
-     * @param original old message
-     * @param newContent new message content, type or sender can not be changed
-     */
-    void editMessage(Message original, String newContent);
-
-    /**
-     * Edits channel, by muteting its members list
-     * @param channel with its members list changed
-     */
-    void editChannel(Channel channel);
-
-    /**
-     * Deletes message from database, effective after all usersrs relog
-     * @param message to delete
-     */
-    void deleteMessage(Message message);
-
-    /**
-     * Deletes chanel fron database, effective after all users relog
-     * @param channel to delete, deletes messages with it
-     */
-    void deleteChannel(Channel channel);
-
 
     class LoginException extends Exception {
 

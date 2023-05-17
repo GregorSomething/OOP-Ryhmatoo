@@ -36,7 +36,7 @@ public class SocketConnector {
             } catch (IOException e) {
                 if (this.socket.isClosed()) {
                     this.runningOn.interrupt();
-                    System.out.println("ServerSocket is closed, terminating server stuff.");
+                    Server.LOG.info("ServerSocket is closed, terminating server stuff.");
                     return;
                 }
             }

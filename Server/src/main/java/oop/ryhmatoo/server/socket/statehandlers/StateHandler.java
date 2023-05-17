@@ -2,6 +2,7 @@ package oop.ryhmatoo.server.socket.statehandlers;
 
 import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
+import oop.ryhmatoo.server.Server;
 import oop.ryhmatoo.server.socket.SocketHolder;
 import oop.ryhmatoo.server.socket.SocketStateHandler;
 
@@ -24,7 +25,8 @@ public class StateHandler {
     public void handel(int code, SocketHolder socket) {
         boolean ok = this.handlerMap.get(socket.getState()).handel(code, socket);
         if (!ok) {
-            System.out.printf("Failed to handel code %d, on user %s in state %s.", code, socket.getUser().name(), socket.getState());
+            Server.LOG.warning(String.format("Failed to handel code %d, on user %s in state %s.",
+                    code, socket.getUser().name(), socket.getState()));
         }
     }
 

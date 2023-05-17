@@ -44,8 +44,7 @@ public class ConnectionHandler implements SocketStateHandler {
 
             return true;
         } catch (IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handelValidCredentialsRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelValidCredentialsRequest " + e.getMessage());
             return false;
         }
     }
@@ -68,8 +67,7 @@ public class ConnectionHandler implements SocketStateHandler {
 
             return true;
         } catch (SQLException | IOException e) {
-            System.out.println("Viga requesti käsitlemisel. handelCreateNewUserRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelCreateNewUserRequest " + e.getMessage());
             return false;
         }
     }
@@ -116,8 +114,7 @@ public class ConnectionHandler implements SocketStateHandler {
                     .getMapper().writeValueAsString(response));
             return true;
         } catch (IOException | SQLException e) {
-            System.out.println("Viga requesti käsitlemisel. handelValidCredentialsRequest " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga requesti käsitlemisel. handelValidCredentialsRequest " + e.getMessage());
             return false;
         }
     }

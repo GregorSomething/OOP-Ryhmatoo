@@ -17,13 +17,14 @@ public class UserStorage {
     }
 
     public void saveNewUser(ServerUser user) throws SQLException {
-        this.database.execute(Statments.INSERT_USER, user.name(), user.color(), user.salt(), user.hashedPassword());
+        this.database.execute(Statments.INSERT_USER,
+                user.name(), user.color(), user.salt(), user.hashedPassword());
     }
 
     public ServerUser getUser(String name) throws SQLException {
         return this.database.queryAndMap(Statments.GET_USER_BY_NAME, ServerUser::from, name)
                 .stream().filter(u -> u.name().equals(name)) // Osa andmebaase vördlevad caseinsensitiv modes
-                .reduce((u1, u2) -> u1).orElse(null);
+                .findAny().orElse(null);
     }
 
     public List<String> getAllUsernames() throws SQLException {

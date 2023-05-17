@@ -45,8 +45,7 @@ public class ReadHandler implements SocketStateHandler {
 
             return true;
         } catch (SQLException e) {
-            System.out.println("Viga response loomisel. sendMessage " + e.getMessage());
-            e.printStackTrace(); // Nii saan kiiremini debuggida
+            Server.LOG.warning("Viga response loomisel. sendMessage " + e.getMessage());
             return false;
         }
     }

@@ -182,24 +182,4 @@ public class ServerConnectionImp implements ServerConnection {
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    public void editMessage(Message original, String newContent) {
-        // TODO: Implement
-    }
-
-    @Override
-    public void editChannel(Channel channel) {
-        // TODO: Implement
-    }
-
-    @Override
-    public void deleteMessage(Message message) {
-        // TODO: Implement
-    }
-
-    @Override
-    public void deleteChannel(Channel channel) {
-        // TODO: Implement
-    }
 }
