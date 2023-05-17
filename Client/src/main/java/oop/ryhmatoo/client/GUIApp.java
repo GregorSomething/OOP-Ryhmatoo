@@ -22,13 +22,10 @@ import javafx.stage.Stage;
 import oop.ryhmatoo.client.socket.ServerConnection;
 import oop.ryhmatoo.common.data.Channel;
 import oop.ryhmatoo.common.data.Message;
+import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -441,16 +438,19 @@ public class GUIApp extends Application {
             messages.getChildren().add(link);
             link.setOnAction(e -> {
                 File f = conn.getFile(message);
-                System.out.println(f.toPath());
-                try {
-                    Path path = Paths.get("/downloads");
-                    if (!Files.exists(path)) {
-                        Files.createDirectory(path);
-                    }
-                    Files.copy(f.toPath(), Paths.get("/downloads/" + f.getName()), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                //create a popup that shows the location of the file
+                Stage popupStage = new Stage();
+                VBox popupRoot = new VBox();
+                Label titleLabel = new Label("File location");
+                Label locationLabel = new Label(f.getAbsolutePath());
+                Button closeButton = new Button("Close");
+                popupRoot.setSpacing(10);
+                popupRoot.setPadding(new Insets(10));
+                popupRoot.getChildren().addAll(titleLabel, locationLabel, closeButton);
+                closeButton.setOnAction(event -> popupStage.close());
+                Scene popupScene = new Scene(popupRoot, 400, 100);
+                popupStage.setScene(popupScene);
+                popupStage.show();
             });
         }
     }
@@ -464,7 +464,7 @@ public class GUIApp extends Application {
         VBox popupRoot = new VBox();
         Label titleLabel = new Label("Create new channel");
         TextField nameTextField = new TextField();
-        ComboBox<String> membersComboBox = new ComboBox<>();
+        CheckComboBox<String> membersComboBox = new CheckComboBox<>();
         Button createButton = new Button("Create");
 
         popupRoot.setSpacing(10);
@@ -474,17 +474,10 @@ public class GUIApp extends Application {
         List<String> activeUsers = conn.getActiveUsers();
         activeUsers.remove(user);
         membersComboBox.getItems().addAll(activeUsers);
-        membersComboBox.getSelectionModel().selectFirst();
 
-        membersComboBox.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    membersComboBox.getItems().remove(newValue);
-                    membersComboBox.getItems().add(0, newValue);
-                    membersComboBox.getSelectionModel().selectFirst();
-                });
 
         createButton.setOnAction(event -> {
-            List<String> members = membersComboBox.getItems();
+            List<String> members = membersComboBox.getCheckModel().getCheckedItems();
             members.add(user);
             try {
                 conn.createNewChannel(nameTextField.getText(), members, Channel.Type.CHANNEL);
