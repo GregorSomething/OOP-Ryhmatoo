@@ -393,6 +393,8 @@ public class GUIApp extends Application {
         }
         updateMessagesList(messages, selectedChannel);
         updateUserList(userList, selectedChannel);
+
+        conn.registerUserListener(user -> Platform.runLater(() -> updateUserList(userList, selectedChannel)));
     }
 
     private void updateUserList(ListView<String> userList, Channel channel) {
@@ -471,9 +473,9 @@ public class GUIApp extends Application {
         popupRoot.setPadding(new Insets(10));
         membersComboBox.setMinWidth(200);
 
-        List<String> activeUsers = conn.getActiveUsers();
-        activeUsers.remove(user);
-        membersComboBox.getItems().addAll(activeUsers);
+        List<String> allUsers = conn.getAllUsers();
+        allUsers.remove(user);
+        membersComboBox.getItems().addAll(allUsers);
 
 
         createButton.setOnAction(event -> {
