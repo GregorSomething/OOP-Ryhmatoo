@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -479,7 +480,7 @@ public class GUIApp extends Application {
 
 
         createButton.setOnAction(event -> {
-            List<String> members = membersComboBox.getCheckModel().getCheckedItems();
+            List<String> members = new ArrayList<>(membersComboBox.getCheckModel().getCheckedItems());
             members.add(user);
             try {
                 conn.createNewChannel(nameTextField.getText(), members, Channel.Type.CHANNEL);
