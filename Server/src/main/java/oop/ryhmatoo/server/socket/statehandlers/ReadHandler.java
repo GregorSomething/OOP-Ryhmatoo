@@ -51,6 +51,14 @@ public class ReadHandler implements SocketStateHandler {
         }
     }
 
+    public boolean sendUser(String user) {
+        Server.getInstance().getSockets().getSockets().stream()
+                .filter(s -> s.getState().equals(SocketHolder.State.READING_SOCKET))
+                .forEach(s -> this.write(222, s, user));
+
+        return true;
+    }
+
     @SneakyThrows
     private void write(int code, SocketHolder socket, Object object) {
         DataOutputStream dos = socket.getDataOutputStream();

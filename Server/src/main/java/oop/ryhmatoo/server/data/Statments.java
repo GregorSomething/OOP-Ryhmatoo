@@ -17,6 +17,7 @@ public enum Statments implements SQLStatement {
             VALUES(?, ?, ?, ?);"""),
 
     GET_USER_BY_NAME("SELECT * FROM users WHERE name = ?;"),
+    GET_ALL_USERS("SELECT * FROM users;"),
     INSERT_USER("""
             INSERT INTO users
             (name, color, salt, password)

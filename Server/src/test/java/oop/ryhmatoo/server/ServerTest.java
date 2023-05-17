@@ -56,7 +56,7 @@ public class ServerTest {
     }
 
     @Test
-    public void DDD_channelTest() {
+    public void DDD__channelTest() {
         sclient.createNewChannel("Jama", List.of("test", "Gregor", "kanad"), Channel.Type.CHANNEL);
 
         assertNotNull(sclient.getChats().stream().filter(channel -> channel.name().equals("Jama")).findAny().orElse(null));
@@ -80,6 +80,13 @@ public class ServerTest {
         List<String> users = sclient.getActiveUsers();
         assertEquals(1, users.size());
         assertEquals("Gregor", users.get(0));
+    }
+
+    @Test
+    public void GGG__getAllUsers() throws Exception {
+        List<String> users = sclient.getAllUsers();
+        System.out.println(users);
+        assertTrue(users.contains("Gregor"));
         sclient.close();
     }
 }

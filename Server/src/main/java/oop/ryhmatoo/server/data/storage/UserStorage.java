@@ -26,6 +26,16 @@ public class UserStorage {
                 .reduce((u1, u2) -> u1).orElse(null);
     }
 
+    public List<String> getAllUsernames() throws SQLException {
+        return this.database.queryAndMap(Statments.GET_ALL_USERS, rs -> {
+            try { // Pole ilus, kuid on funktsionaalne.
+                return rs.getString("name");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
 
 
 

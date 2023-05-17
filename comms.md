@@ -14,6 +14,7 @@ See fail on mõeldud soceti suhtluse kirjeldamiseks.
 111 -> R211; // Küsib aktiivsed kasutajad
 112 -> MessageRequest -> R212; // Küsib kanalist sõnumeid
 112 -> String fName -> R213; // Küsib faili
+114 -> R214; // Küsib kõik kasutajad
 
 120 -> Message; // Saadab sõnumi
 121 -> ChannelCreateRequest; // Loob kui poel sama nimelits, saada läbi 221, ei vasta!
@@ -25,7 +26,9 @@ See fail on mõeldud soceti suhtluse kirjeldamiseks.
 211 -> List<String>; // Saadab aktiivsed kasutajad
 212 -> List<Message>; // Saadab sõnumid, ka siis kui kanal oli vale
 213 -> int len -> byte[] data; // Saadab faili len 0 == pole faili
+214 -> List<String>; // Saadab kõik kasutajad
 
 220 -> Message; // Saadab just saadetud sõnumi
 221 -> Channel; // Saadab just loodud kanali
+222 -> String; // Saadab just sisse loginud kasutaja
 ````

@@ -171,13 +171,16 @@ public class ServerConnectionImp implements ServerConnection {
 
     @Override
     public void registerUserListener(Consumer<String> listener) {
-        //TODO: Implement
+        this.readSocket.registerUserListener(listener);
     }
 
     @Override
     public List<String> getAllUsers() {
-        // TODO: Implement
-        return List.of("See", "ei", "toimi", "veel");
+        try {
+            return this.writeSocket.getAllUsers();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

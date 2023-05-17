@@ -75,4 +75,11 @@ public class WriteSocket extends AbstractSocketConnection {
     public File getFile(String storageName) throws IOException {
         return this.fileHandler.getFile(storageName, this.dataInputStream, this.dataOutputStream);
     }
+
+    public List<String> getAllUsers() throws IOException {
+        this.dataOutputStream.writeInt(124);
+        int resCode = this.dataInputStream.readInt();
+        return this.jsonHelper.getListFromJSON(
+                this.dataInputStream.readUTF(), String.class);
+    }
 }

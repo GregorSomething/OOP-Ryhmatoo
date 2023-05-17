@@ -37,6 +37,7 @@ public class WriteHandler implements SocketStateHandler {
             case 120 -> this.handelMessageReceive(socket);
             case 121 -> this.handelChannelCreateRequest(socket);
             case 122 -> this.handelFileReceive(socket);
+            case 124 -> this.handelAllUserRequest(socket);
             default -> throw new IllegalStateException("Unexpected request code: " + code);
         };
     }
@@ -153,6 +154,20 @@ public class WriteHandler implements SocketStateHandler {
             return true;
         } catch (IOException | SQLException e) {
             System.out.println("Viga requesti käsitlemisel. handelChannelCreateReceive " + e.getMessage());
+            e.printStackTrace(); // Nii saan kiiremini debuggida
+            return false;
+        }
+    }
+
+    private boolean handelAllUserRequest(SocketHolder socket) {
+        try {
+            DataOutputStream dos = socket.getDataOutputStream();
+            dos.writeInt(214);
+            // TODO
+            dos.writeUTF(this.helper.getListAsJSON(this.database.getUserStorage().getAllUsernames()));
+            return true;
+        } catch (IOException | SQLException e) {
+            System.out.println("Viga requesti käsitlemisel. handelActiveUserRequest " + e.getMessage());
             e.printStackTrace(); // Nii saan kiiremini debuggida
             return false;
         }

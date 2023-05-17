@@ -15,11 +15,13 @@ public class ReadSocket extends AbstractSocketConnection {
 
     private final List<Consumer<Message>> messageListeners;
     private final List<Consumer<Channel>> channelListeners;
+    private final List<Consumer<String>> userListeners;
 
     public ReadSocket(String address, int port, JSONHelper jsonHelper) throws IOException {
         super(address, port, jsonHelper);
         this.messageListeners = new ArrayList<>();
         this.channelListeners = new ArrayList<>();
+        this.userListeners = new ArrayList<>();
     }
 
     public void registerMessageListener(Consumer<Message> listener) {
@@ -28,6 +30,10 @@ public class ReadSocket extends AbstractSocketConnection {
 
     public void registerChannelListener(Consumer<Channel> listener) {
         this.channelListeners.add(listener);
+    }
+
+    public void registerUserListener(Consumer<String> listener) {
+        this.userListeners.add(listener);
     }
 
     public void run() {
@@ -40,10 +46,7 @@ public class ReadSocket extends AbstractSocketConnection {
             while (!this.socket.isClosed()) {
                 this.update();
             }
-        } catch (SocketException e) {
-            System.out.println();
-            System.out.println("See pole error! Vaid asi millest ei saanud lahti. Korrektne sulgemine tehti, see põhjustab selle");
-            e.printStackTrace(); // Ma ei suutnud seda lahendada;
+        } catch (SocketException ignored) {
         }
     }
 
@@ -57,6 +60,10 @@ public class ReadSocket extends AbstractSocketConnection {
             case 221 -> {
                 Channel channel = this.jsonHelper.readObjectFrom(this.dataInputStream, Channel.class);
                 this.channelListeners.forEach(l -> l.accept(channel));
+            }
+            case 222 -> {
+                String user = dataInputStream.readUTF();
+                this.userListeners.forEach(l -> l.accept(user));
             }
         }
     }

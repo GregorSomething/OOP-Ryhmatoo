@@ -35,4 +35,8 @@ public class StateHandler {
     public void sendChannel(Channel channel) {
         this.readHandler.sendChannel(channel);
     }
+
+    public void sendUser(String user) {
+        this.readHandler.sendUser(user);
+    }
 }

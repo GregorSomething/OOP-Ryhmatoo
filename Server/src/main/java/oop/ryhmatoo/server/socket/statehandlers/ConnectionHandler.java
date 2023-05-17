@@ -102,6 +102,8 @@ public class ConnectionHandler implements SocketStateHandler {
 
             // Kui parool ja nimi oli õige, muuda state. Seab ka kasutaja nime.
             if (response.valid()) {
+                if (socket.getState() == SocketHolder.State.CONNECTED)
+                    Server.getInstance().getSockets().getStateHandler().sendUser(request.name());
                 socket.setState(newState);
                 socket.setUser(userStorage.getUser(request.name()));
                 Server.LOG.info(String.format("Socket %s logis sisse.", socket.toString()));
