@@ -15,8 +15,7 @@
 - [x] Uute chatide loomine/saatmine
 - [x] Server <-> Client ühendus Socketiga (Gregor)
 - [ ] ~~Andmeklasside (v Recordite) automaatne saatmine/lugemine (Socketiga)~~ (Gregor)
-- [ ] Kahe arvuti vahene ühendus (Karl Oskar)
-- [ ] Eri failide saatmine
+- [X] Kahe arvuti vahene ühendus (Karl Oskar)
+- [X] Eri failide saatmine (Gregor)
 - [x] Andmete salvestamine andmebaasi v faili (Gregor)
 - [x] GUI (Karl Oskar)
-- [ ] Lisada Siia vastavalt vajadusele
